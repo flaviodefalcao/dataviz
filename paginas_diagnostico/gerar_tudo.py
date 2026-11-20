@@ -22,11 +22,14 @@ Grava em saida/:
     alunos.csv          o CSV completo que o gerar.py lê (324+ colunas, 1 linha por aluno)
     site/               uma página HTML por aluno (<aluno_id>.html)
     relatorio.txt       contagem por grupo e avisos
+    emails.csv          1 e-mail por pessoa (assunto, textos, link da página) para a ferramenta de disparo
+    emails_previa.html  um e-mail de cada grupo, para revisar
 
 Etapas (cada uma também roda sozinha, ver README.md):
     1. scripts/inferir_gabarito.py  -> dados/gabarito.csv   (só se não existir, ou com --refazer-gabarito)
     2. montar_base.py               -> saida/base_alunos.csv (+ atualiza dados/)
     3. gerar_site.py                -> saida/alunos.csv + saida/site/
+    4. emails/gerar_emails.py       -> saida/emails.csv + saida/emails_previa.html
 """
 import argparse
 import subprocess
@@ -65,6 +68,7 @@ def main():
     ap.add_argument("--dominio", default="SEU-DOMINIO")
     ap.add_argument("--logo-topo", default="")
     ap.add_argument("--logo-marca", default="")
+    ap.add_argument("--url-pagina", default="", help="endereço de cada página, com {aluno_id}. Padrão: https://<dominio>/diagnostico/{aluno_id}.html")
     a = ap.parse_args()
 
     arq = {k: mais_recente(a.entrada, p) for k, p in PADROES.items()}
@@ -93,7 +97,16 @@ def main():
     cmd += ["--logo-marca", a.logo_marca] if a.logo_marca else []
     cmd += [] if a.todas else ["--amostra", "3"]
     rodar(cmd)
-    print(f"\nPronto. CSV: {saida / 'alunos.csv'} · páginas: {saida / 'site'}/ · relatório: {saida / 'relatorio.txt'}")
+
+    # 4. e-mails (1 por pessoa, com o link da página dela)
+    url = a.url_pagina or f"https://{a.dominio}/diagnostico/{{aluno_id}}.html"
+    cmd = [AQUI / "emails" / "gerar_emails.py", "--base", base, "--saida", saida, "--url-pagina", url]
+    cmd += ["--logo-url", a.logo_topo] if a.logo_topo else []
+    if arq["usuarios"]:
+        cmd += ["--usuarios", arq["usuarios"]]
+    rodar(cmd)
+    print(f"\nPronto. CSV: {saida / 'alunos.csv'} · páginas: {saida / 'site'}/ · e-mails: {saida / 'emails.csv'}"
+          f" (prévia {saida / 'emails_previa.html'}) · relatório: {saida / 'relatorio.txt'}")
 
 
 if __name__ == "__main__":

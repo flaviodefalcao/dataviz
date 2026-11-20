@@ -24,9 +24,10 @@ cd paginas_diagnostico
 # 2) revisão: 3 páginas de cada grupo, empilhadas em saida/site/_previa.html (~1 min)
 python3 gerar_tudo.py
 
-# 3) produção: todas as páginas (~3 min)
+# 3) produção: todas as páginas + os e-mails (~3 min)
 python3 gerar_tudo.py --todas \
     --dominio www.seusite.com.br \
+    --url-pagina "https://www.seusite.com.br/diagnostico/{aluno_id}.html" \
     --logo-topo  https://cdn.seusite.com.br/diagnostico/logo_topo.png \
     --logo-marca https://cdn.seusite.com.br/diagnostico/logo_marca.png
 ```
@@ -40,6 +41,8 @@ python3 gerar_tudo.py --todas \
 | `site/_previa.html` | só na revisão: as páginas da amostra empilhadas, com menu por grupo |
 | `base_alunos.csv` | base intermediária: só os dados do aluno (23 colunas) |
 | `relatorio.txt` | contagem por grupo, avisos e campos vazios. **Leia antes de publicar** |
+| `emails.csv` | **e-mail de cada pessoa**: assunto, pré-cabeçalho, título, textos, botão e link da página dela (ver `emails/README.md`) |
+| `emails_previa.html` | um e-mail de cada grupo, para revisar |
 
 Publique `saida/site/` como arquivos estáticos. O nome do arquivo é o `user_id` (UUID), que não dá para adivinhar.
 
