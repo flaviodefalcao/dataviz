@@ -7,3 +7,5 @@ paginas_diagnostico/base_alunos.csv
 paginas_diagnostico/*respostas-alunos*.csv
 paginas_diagnostico/*opcoes-sisu*.csv
 paginas_diagnostico/cadastro*.csv
+paginas_diagnostico/entrada/
+paginas_diagnostico/saida/

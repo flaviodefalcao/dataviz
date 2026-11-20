@@ -170,8 +170,6 @@ def montar_linha(a, refs, bf=False, fase2=False, dominio="SEU-DOMINIO", avisos=N
     curso = refs.cursos.get(a.get("curso_id", ""), {})
     if grupo == "E":
         curso = {}
-    if not a.get("nome"):
-        avisos["aluno sem nome: o texto fica \", seus 24 pontos…\" (traga o nome no cadastro)"].append(a["aluno_id"])
     modelos_area = refs.modelos.get(area, [])
     pcts = [int(m["pct_acerto"]) for m in modelos_area] or [0]
     ref_area = refs.areas.get(area, {})
@@ -199,6 +197,8 @@ def montar_linha(a, refs, bf=False, fase2=False, dominio="SEU-DOMINIO", avisos=N
             avisos[f"camada de copy inexistente: {c}"].append(a["aluno_id"])
         texto.update(refs.copy.get(c, {}))
     texto = {k: preencher(v, var) for k, v in texto.items()}
+    if not a.get("nome"):  # sem nome: "{nome}, seus 24 pontos…" vira "Seus 24 pontos…"
+        texto = {k: re.sub(r"^\{nome\}, (.)", lambda m: m.group(1).upper(), v) for k, v in texto.items()}
 
     L = {c: "" for c in refs.colunas}
     L.update({k: v for k, v in texto.items() if k in L})
@@ -328,7 +328,7 @@ def fmt(n):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("base", help="base_alunos.csv (1 linha por aluno)")
-    ap.add_argument("-o", "--saida", default=str(AQUI / "alunos.csv"))
+    ap.add_argument("-o", "--saida", default=str(AQUI / "saida" / "alunos.csv"))
     ap.add_argument("--bf-aberta", action="store_true", help="a partir de 27/11: copy de Black Friday aberta")
     ap.add_argument("--fase2-aberta", action="store_true", help="liga o card de 2ª fase para A_topo, A0 e D")
     ap.add_argument("--dominio", default="SEU-DOMINIO")

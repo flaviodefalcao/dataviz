@@ -7,11 +7,11 @@ Gera o site inteiro com um comando: base_alunos.csv -> alunos.csv (324 col.) -> 
         --logo-topo https://cdn.site.com.br/logo_topo.png --logo-marca https://cdn.site.com.br/logo_marca.png
     python3 gerar_site.py base_alunos.csv --bf-aberta --fase2-aberta ...    # a partir de 27/11
 
-Saída (pasta --saida, padrão build/):
-    build/alunos.csv                    CSV completo que o gerar.py lê
-    build/site/<aluno_id>.html          uma página por aluno
-    build/site/_previa.html             só com --amostra: as páginas da amostra empilhadas, para revisão
-    build/relatorio.txt                 contagem por grupo, avisos e campos obrigatórios vazios
+Saída (pasta --saida, padrão saida/):
+    saida/alunos.csv                    CSV completo que o gerar.py lê
+    saida/site/<aluno_id>.html          uma página por aluno
+    saida/site/_previa.html             só com --amostra: as páginas da amostra empilhadas, para revisão
+    saida/relatorio.txt                 contagem por grupo, avisos e campos obrigatórios vazios
 
 Usa o montar_csv.py e o gerar.py sem modificá-los. O gerar.py roda em lotes (--lote, padrão 5.000 alunos)
 para não carregar 80 mil linhas de 324 colunas na memória de uma vez.
@@ -35,7 +35,7 @@ import montar_csv as M  # noqa: E402
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("base", help="base_alunos.csv (1 linha por aluno)")
-    ap.add_argument("-o", "--saida", default=str(AQUI / "build"))
+    ap.add_argument("-o", "--saida", default=str(AQUI / "saida"))
     ap.add_argument("--bf-aberta", action="store_true")
     ap.add_argument("--fase2-aberta", action="store_true")
     ap.add_argument("--dominio", default="SEU-DOMINIO")

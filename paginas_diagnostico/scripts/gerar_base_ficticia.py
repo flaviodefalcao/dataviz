@@ -7,9 +7,9 @@ para testar o fluxo completo (montar_csv.py -> gerar.py) antes de ter o export r
   * cada aluno é construído para cair no grupo pedido pela regra do montar_csv.py;
   * só usa questões, cursos e numerações que existem em dados/, para não gerar aviso.
 
-NÃO é dado real. Para produção, troque por um export do banco no mesmo formato (ver COMO_GERAR.md).
+NÃO é dado real. Para produção, troque por um export do banco no mesmo formato (ver README.md).
 
-Uso:  python3 scripts/gerar_base_ficticia.py [-o base_alunos_ficticia.csv] [--escala 1.0] [--seed 2026]
+Uso:  python3 scripts/gerar_base_ficticia.py [-o saida/base_alunos_ficticia.csv] [--escala 1.0] [--seed 2026]
 """
 import argparse
 import csv
@@ -124,7 +124,7 @@ class Fabrica:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("-o", "--saida", default=str(RAIZ / "base_alunos_ficticia.csv"))
+    ap.add_argument("-o", "--saida", default=str(RAIZ / "saida" / "base_alunos_ficticia.csv"))
     ap.add_argument("--escala", type=float, default=1.0, help="0.01 = 1%% da base (teste rápido)")
     ap.add_argument("--seed", type=int, default=2026)
     a = ap.parse_args()

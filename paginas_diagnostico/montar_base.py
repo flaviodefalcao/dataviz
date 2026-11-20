@@ -5,7 +5,8 @@ Monta a base_alunos.csv (1 linha por aluno) a partir dos exports do Matrix:
     --dia1      matrix-gabarito-2026-dia1-respostas-alunos-*.csv   (respostas, cor, língua, notas, acertos)
     --dia2      matrix-gabarito-2026-dia2-respostas-alunos-*.csv
     --sisu      matrix-opcoes-sisu-2026-*.csv                      (1ª e 2ª opção de curso)
-    --cadastro  (opcional) aluno_id;nome;tipo_conta                (nome e pagante/gratuito; traz também os grupos M)
+    --usuarios  matrix-usuarios-id-email-*.csv                     (todos os usuários: quem não lançou gabarito vira grupo M)
+                Colunas: user_id (ou aluno_id). Opcionais: nome, tipo_conta (pagante/gratuito). O e-mail não é usado.
 
 E de dados/gabarito.csv (gabarito por cor + numeração canônica: ver scripts/inferir_gabarito.py).
 
@@ -17,7 +18,7 @@ Também atualiza, a partir dos mesmos dados:
     dados/ref_modelos.csv    % de acerto dos modelos
 
 Uso:
-    python3 montar_base.py --dia1 dia1.csv --dia2 dia2.csv --sisu sisu.csv [--cadastro cadastro.csv] [-o base_alunos.csv]
+    python3 montar_base.py --dia1 dia1.csv --dia2 dia2.csv --sisu sisu.csv --usuarios usuarios.csv [-o base_alunos.csv]
 """
 import argparse
 import csv
@@ -118,8 +119,8 @@ def main():
     ap.add_argument("--dia1", required=True)
     ap.add_argument("--dia2", required=True)
     ap.add_argument("--sisu", required=True)
-    ap.add_argument("--cadastro", default="", help="aluno_id;nome;tipo_conta (pagante/gratuito)")
-    ap.add_argument("-o", "--saida", default=str(AQUI / "base_alunos.csv"))
+    ap.add_argument("--usuarios", "--cadastro", dest="cadastro", default="", help="user_id[;nome;tipo_conta]")
+    ap.add_argument("-o", "--saida", default=str(AQUI / "saida" / "base_alunos.csv"))
     ap.add_argument("--dados", default=str(DADOS))
     ap.add_argument("--min-alunos-curso", type=int, default=10, help="mínimo de alunos do Matrix no curso+IES para ter comparação")
     ap.add_argument("--max-faceis", type=int, default=0, help="limita a quantidade de fáceis por aluno (0 = sem limite)")
@@ -133,7 +134,7 @@ def main():
     sisu = defaultdict(dict)
     for r in ler(a.sisu):
         sisu[r["user_id"]][r["opcao"]] = r
-    cadastro = {r["aluno_id"]: r for r in ler(a.cadastro)} if a.cadastro else {}
+    cadastro = {(r.get("user_id") or r.get("aluno_id")): r for r in ler(a.cadastro)} if a.cadastro else {}
 
     # ---- 1. correção na numeração canônica + % de acerto por questão
     correcoes = {}
@@ -212,7 +213,9 @@ def main():
                  caderno_dia1=(r1 or {}).get("cor_caderno", ""), caderno_dia2=(r2 or {}).get("cor_caderno", ""),
                  lingua=(r1 or {}).get("lingua", ""))
         if not L["nome"]:
-            avisos["aluno sem nome (passe --cadastro)"] += 1
+            avisos["aluno sem nome (o texto sai sem o nome: \"Seus 24 pontos…\")"] += 1
+        if cadastro and aid not in cadastro:
+            avisos["lançou gabarito mas não está na lista de usuários (entra assim mesmo)"] += 1
         for area in AREAS:
             r = r1 if DIA_DA_AREA[area] == 1 else r2
             if r:
