@@ -1,0 +1,13 @@
+aluno_id,primeiro_nome,grupo,tipo_conta,dia1_status,dia2_status,cor_caderno_d1,cor_caderno_d2,lingua_estrangeira,nota_lc,nota_ch,nota_cn,nota_mt,acertos_lc,acertos_ch,acertos_cn,acertos_mt,media_objetiva,curso_id,nota_top10_curso,diferenca_top10,area_prioritaria,area_mais_perto,ordem_areas,faceis_erradas_ids,faceis_marcadas,modelos_errados_ids,faixa_lc,faixa_ch,faixa_cn,faixa_mt
+exemplo_01,Ana,A,,completo,completo,,Amarelo,,687,759,724,840,39,41,33,36,752.5,MEDICINA_UFMG,777,-24.5,CN,,CN|LC|CH|MT,129|107|97,E|E|E,116|125|101,LC2,CH1,CN2,MT3
+exemplo_02,Ana,A_TOPO,,completo,completo,,Azul,,703,733,737,898,41,40,36,40,767.8,MEDICINA_UFMG,777,-9.2,CN,,CN|LC|CH|MT,118|131|119,C|-|B,116|101,LC2,CH1,CN3,MT3
+exemplo_03,Ana,A0,,completo,completo,,Azul,,716,718,718,893,41,40,32,40,761.2,MEDICINA_UFPR,765,-3.8,CN,,CN|LC|CH|MT,127|107|103|134,E|A|E|E,116|125|120,LC2,CH1,CN2,MT3
+exemplo_04,Ana,B,,completo,completo,,Amarelo,,648,721,714,752,34,39,30,27,708.8,MEDICINA_UFMG,777,-68.2,CN,CH,CN|LC|CH|MT,106|128|118|107|131,D|C|A|E|B,116|125|120,LC2,CH1,CN2,MT2
+exemplo_05,Ana,C,,completo,completo,,Amarelo,,630,683,601,670,32,36,16,20,646.0,DIREITO_UFU,714,-68.0,CN,,CN|LC|CH|MT,107|97|131|119,A|A|B|A,116|125|101|93|120,LC1,CH1,CN1,MT1
+exemplo_06,Ana,D,,completo,completo,,,,729,745,830,925,42,40,44,43,807.2,MEDICINA_UNDF,760,47.2,CN,,CN|LC|CH|MT,,,,LC2,CH1,CN3,MT3
+exemplo_07,Ana,E,,completo,completo,Amarelo,,,654,681,687,764,34,36,29,30,696.5,,,,CH,,CH|LC|CN|MT,62|49|84,B|C|D,60,LC2,CH1,CN2,MT2
+exemplo_08,Ana,F,,completo,nao_lancado,,,,549,529,,,,,,,,,,,,,,,,,,,,
+exemplo_09,Ana,G,,nao_lancado,completo,,,,,,711,846,,,,,,,,,,,,,,,,,,
+exemplo_10,Ana,H,,completo,incompleto,,,,544,585,555,,,,,,,,,,,,,,,,,,,
+exemplo_11,Ana,M_ALUNO,aluno_chapeu,nao_lancado,nao_lancado,,,,,,,,,,,,,,,,,,,,,,,,,
+exemplo_12,Ana,M_GRATIS,gratuito,nao_lancado,nao_lancado,,,,,,,,,,,,,,,,,,,,,,,,,
