@@ -2,7 +2,7 @@
 
 Gera uma página HTML personalizada para cada usuário do Matrix, com nota estimada, comparação com o curso
 escolhido no Sisu, questões fáceis que escaparam, questões modelo e plano por área. A partir dos exports
-de **20/11** são **92.509 páginas**.
+de **20/11** são **92.509 páginas**, em 12 grupos (A, A topo, A0, B, C, D, E, F, G, H, M e V).
 
 Só precisa de **Python 3.8+**, sem nenhuma biblioteca extra.
 
@@ -13,11 +13,13 @@ Só precisa de **Python 3.8+**, sem nenhuma biblioteca extra.
 ```bash
 cd paginas_diagnostico
 
-# 1) coloque os 4 exports em entrada/ (os nomes podem ter outra data: o script pega o mais recente)
-#    matrix-gabarito-2026-dia1-respostas-alunos-*.csv
-#    matrix-gabarito-2026-dia2-respostas-alunos-*.csv
-#    matrix-opcoes-sisu-2026-*.csv
-#    matrix-usuarios-*.csv
+# 1) coloque os exports em entrada/ (os nomes podem ter outra data: o script pega o mais recente)
+#    matrix-gabarito-2026-dia1-respostas-alunos-*.csv   respostas do dia 1
+#    matrix-gabarito-2026-dia2-respostas-alunos-*.csv   respostas do dia 2
+#    matrix-opcoes-sisu-2026-*.csv                      cursos escolhidos no Sisu
+#    matrix-usuarios-*.csv                              todos os usuários (user_id, email)
+#    vendas*.csv                                        vendas aprovadas (Guru)              → grupo V
+#    campanhas*.xlsx                                    Nome e Plano (pago/gratuito) por e-mail → nome e grupo V
 
 # 2) revisão: 3 páginas de cada grupo, empilhadas em saida/site/_previa.html (~1 min)
 python3 gerar_tudo.py
@@ -92,17 +94,23 @@ entrada/ (exports)                      dados/ (tabelas fixas)
 
 | Grupo | Condição | 20/11 |
 |---|---|---|
-| M_gratis / M_aluno | não lançou nenhum dia (pagante → M_aluno) | 10.831 |
-| F | só o dia 1 | 22.077 |
-| G | só o dia 2 | 12.458 |
-| H | os dois dias, mas alguma área sem nota (respostas em branco) | 1.630 |
-| E | sem curso no Sisu, ou curso com menos de 10 alunos no Matrix | 23.282 |
-| D | distância ≤ −5 (acima dos 10%) | 1.629 |
-| A0 | \|distância\| < 5 | 1.435 |
-| A_topo | 5 ≤ distância < 20 | 1.877 |
-| A | 20 ≤ distância ≤ 60 | 5.507 |
-| B | distância > 60, Medicina | 2.588 |
-| C | distância > 60, outros cursos | 9.195 |
+| **V** | **já comprou** (Destrinchando ou Revisão Enem, em `vendas*.csv`) **ou tem plano pago no Matrix** (`campanhas*.xlsx`). Vem antes de todos os outros | 3.577 |
+| M_gratis | não lançou nenhum dia | 8.424 |
+| F | só o dia 1 | 21.856 |
+| G | só o dia 2 | 12.411 |
+| H | os dois dias, mas alguma área sem nota (respostas em branco) | 1.609 |
+| E | sem curso no Sisu, ou curso com menos de 10 alunos no Matrix | 22.914 |
+| D | distância ≤ −5 (acima dos 10%) | 1.568 |
+| A0 | \|distância\| < 5 | 1.400 |
+| A_topo | 5 ≤ distância < 20 | 1.811 |
+| A | 20 ≤ distância ≤ 60 | 5.364 |
+| B | distância > 60, Medicina | 2.454 |
+| C | distância > 60, outros cursos | 9.121 |
+
+**Grupo V:** recebe o mesmo diagnóstico do grupo de origem (notas, fáceis, modelos, plano), **sem nenhum card de venda**
+(Seguro, 2ª fase, proposta, Black Friday), mais o que estiver na camada `V` de `dados/copy.csv`. Quem é V e não lançou
+gabarito recebe a página de "aluno do Chapéu" (M_aluno), também sem venda. Origem dos 3.577: M_aluno 2.407, E 368,
+F 221, A 143, B 134, C 74, A_topo 66, D 61, G 47, A0 35, H 21. A coluna `rotulo_previa` mostra a origem.
 
 ### Cálculos
 
@@ -117,7 +125,8 @@ entrada/ (exports)                      dados/ (tabelas fixas)
 | Questões fáceis | as 15 da área prioritária com maior % de acerto (sem língua estrangeira e sem anulada). Entram as que o aluno errou ou deixou em branco, por % de acerto. Média de 6 por aluno, máximo 15 |
 | Questões modelo | as 5 da área prioritária (`dados/ref_modelos.csv`) que o aluno errou ou deixou em branco |
 | Plano por área | texto por área × faixa de acertos (`dados/textos_plano.csv`) |
-| Sem nome | os exports não trazem o nome, então os textos começam sem ele: "Seus 24 pontos começam em…", "O seu resultado…" |
+| Nome | primeiro nome da planilha de campanhas (`Nome`), cruzada por e-mail. Hoje 11.162 usuários têm nome. Sem nome, os textos começam sem ele: "Seus 24 pontos começam em…", "O seu resultado…" |
+| Grupo V | e-mail em `vendas*.csv` com Situação = Aprovada, ou `Plano` ≠ gratuito na planilha de campanhas, cruzados com `matrix-usuarios-*.csv` pelo e-mail |
 
 Conferência: o único aluno da prévia que aparece nos exports (exemplo A topo) sai idêntico, com área prioritária,
 fáceis, letras marcadas, modelos e média iguais. As 14 páginas da prévia, remontadas pelo
@@ -152,9 +161,11 @@ O site já pode ser gerado, mas estes pontos ainda mudam o que o aluno lê:
    O `relatorio.txt` lista quais faltam.
 2. **Pesos das áreas por curso** (`ref_cursos.csv`, `peso_*`). Sem pesos, **Matemática é a área prioritária de ~60%**
    dos alunos, porque a nota de MT varia mais na TRI.
-3. **Nome do aluno:** os exports não trazem. Se houver, acrescente uma coluna `nome` ao arquivo de usuários.
-4. **Pagante × gratuito:** o arquivo de usuários não diz quem é aluno do Chapéu. Hoje todos os que não lançaram
-   gabarito caem em **M_gratis**. Com uma coluna `tipo_conta` (`pagante`/`gratuito`), os pagantes vão para M_aluno.
+3. **Texto próprio do grupo V:** escreva em `dados/copy.csv`, com `camada = V`. Pode usar qualquer campo da página,
+   por exemplo `proposta_eyebrow`, `proposta_titulo`, `proposta_texto1`, `proposta_cta_texto` e `proposta_cta_url` para um card só deles.
+   Enquanto a camada estiver vazia, o V recebe o diagnóstico sem venda.
+4. **Nome:** só 11.162 dos 92.509 (12%) têm nome, os que estão na planilha de campanhas (cadastros até 08/11). Uma lista
+   completa com `nome` (coluna `nome` no arquivo de usuários) cobre o resto.
 5. **Cortes de acertos do plano** (`textos_plano.csv`): provisórios. Humanas tem uma faixa só.
 6. **Copy de Black Friday para B, E e M** (`copy.csv`): hoje, com `--bf-aberta`, esses grupos continuam com
    "Me avise quando abrir".
@@ -165,4 +176,4 @@ O site já pode ser gerado, mas estes pontos ainda mudam o que o aluno lê:
 ## 6. Dados pessoais
 
 `entrada/` e `saida/` estão no `.gitignore`: os exports e as páginas geradas não vão para o repositório.
-O e-mail do arquivo de usuários não é usado em nenhum lugar.
+O e-mail só é usado para cruzar nome, plano e vendas com o `user_id`. Ele não vai para nenhum CSV de saída nem para as páginas.

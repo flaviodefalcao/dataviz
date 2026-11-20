@@ -11,3 +11,4 @@ G;G · só o dia 2{fase2_rotulo} · {pessoas} pessoas;;G;COMUM PARCIAL G;;nao;
 H;H · gabarito incompleto{fase2_rotulo} · {pessoas} pessoas;;H;COMUM PARCIAL H;;nao;
 M_aluno;M · aluno do Chapéu sem gabarito{fase2_rotulo} · {pessoas} pessoas;;M;COMUM M M_aluno;;nao;
 M_gratis;M · usuário gratuito sem gabarito{fase2_rotulo} · {pessoas} pessoas;;M;COMUM M M_gratis;;nao;
+V;V · já comprou (Destrinchando, Revisão) ou é pago no Matrix · origem {origem} · {pessoas} pessoas;;V;COMUM;;nao;

@@ -5,6 +5,8 @@ Monta a base_alunos.csv (1 linha por aluno) a partir dos exports do Matrix:
     --dia1      matrix-gabarito-2026-dia1-respostas-alunos-*.csv   (respostas, cor, língua, notas, acertos)
     --dia2      matrix-gabarito-2026-dia2-respostas-alunos-*.csv
     --sisu      matrix-opcoes-sisu-2026-*.csv                      (1ª e 2ª opção de curso)
+    --vendas    vendas*.csv (Guru)                                  (quem comprou Destrinchando / Revisão Enem: grupo V)
+    --planos    campanhas-*.xlsx                                   (Nome e Plano pago/gratuito por e-mail: nome e grupo V)
     --usuarios  matrix-usuarios-id-email-*.csv                     (todos os usuários: quem não lançou gabarito vira grupo M)
                 Colunas: user_id (ou aluno_id). Opcionais: nome, tipo_conta (pagante/gratuito). O e-mail não é usado.
 
@@ -36,13 +38,49 @@ COL_NOTA = {"LC": "nota_linguagens", "CH": "nota_ciencias_humanas", "CN": "nota_
 COL_ACERTOS = {a: c.replace("nota_", "acertos_") for a, c in COL_NOTA.items()}
 BASE_COLS = ["aluno_id", "nome", "tipo_conta", "dia1_lancado", "dia2_lancado", "caderno_dia1", "caderno_dia2", "lingua",
              "nota_LC", "nota_CH", "nota_CN", "nota_MT", "acertos_LC", "acertos_CH", "acertos_CN", "acertos_MT", "media",
-             "curso_id", "area_prioritaria", "area_mais_perto", "faceis_ids", "faceis_marcadas", "modelos_errados_ids"]
+             "curso_id", "area_prioritaria", "area_mais_perto", "faceis_ids", "faceis_marcadas", "modelos_errados_ids",
+             "ja_comprou"]
 MINUSCULAS = {"de", "da", "do", "das", "dos", "e", "em", "para", "com", "a", "o", "na", "no"}
 SIGLA_MASCULINA = ("IF", "CEFET", "ITA", "IME", "INSPER", "IMPA")
 
 
 # ------------------------------------------------------------------ utilidades
+def ler_xlsx(caminho):
+    """Lê a 1ª aba de um .xlsx só com a biblioteca padrão (zip + XML)."""
+    import zipfile
+    import xml.etree.ElementTree as ET
+    ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+    with zipfile.ZipFile(caminho) as z:
+        comp = []
+        if "xl/sharedStrings.xml" in z.namelist():
+            for si in ET.fromstring(z.read("xl/sharedStrings.xml")).findall("m:si", ns):
+                comp.append("".join(t.text or "" for t in si.iter("{%s}t" % ns["m"])))
+        abas = sorted(n for n in z.namelist() if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", n))
+        folha = ET.fromstring(z.read(abas[0]))
+    linhas = []
+    for row in folha.iter("{%s}row" % ns["m"]):
+        valores = {}
+        for c in row.findall("m:c", ns):
+            col = re.match(r"[A-Z]+", c.get("r")).group(0)
+            idx = 0
+            for ch in col:
+                idx = idx * 26 + ord(ch) - 64
+            t, v = c.get("t"), c.find("m:v", ns)
+            if t == "s" and v is not None:
+                valores[idx] = comp[int(v.text)]
+            elif t == "inlineStr":
+                valores[idx] = "".join(x.text or "" for x in c.iter("{%s}t" % ns["m"]))
+            else:
+                valores[idx] = v.text if v is not None else ""
+        if valores:
+            linhas.append([valores.get(i, "") for i in range(1, max(valores) + 1)])
+    cab = [str(x).strip() for x in linhas[0]]
+    return [{k: str(v or "").strip() for k, v in zip(cab, l)} for l in linhas[1:]]
+
+
 def ler(caminho):
+    if str(caminho).lower().endswith(".xlsx"):
+        return ler_xlsx(caminho)
     texto = Path(caminho).read_text(encoding="utf-8-sig")
     cab = texto.split("\n", 1)[0]
     sep = ";" if cab.count(";") >= cab.count(",") else ","
@@ -120,6 +158,8 @@ def main():
     ap.add_argument("--dia2", required=True)
     ap.add_argument("--sisu", required=True)
     ap.add_argument("--usuarios", "--cadastro", dest="cadastro", default="", help="user_id[;nome;tipo_conta]")
+    ap.add_argument("--vendas", default="", help="vendas (Guru): colunas E-mail, Produto, Situação")
+    ap.add_argument("--planos", default="", help="planilha de usuários do Matrix (campanhas .xlsx/.csv): colunas Nome, E-mail, Plano")
     ap.add_argument("-o", "--saida", default=str(AQUI / "saida" / "base_alunos.csv"))
     ap.add_argument("--dados", default=str(DADOS))
     ap.add_argument("--min-alunos-curso", type=int, default=10, help="mínimo de alunos do Matrix no curso+IES para ter comparação")
@@ -135,6 +175,30 @@ def main():
     for r in ler(a.sisu):
         sisu[r["user_id"]][r["opcao"]] = r
     cadastro = {(r.get("user_id") or r.get("aluno_id")): r for r in ler(a.cadastro)} if a.cadastro else {}
+    # nome, plano pago e compras chegam por e-mail: junta com a lista de usuários (user_id;email)
+    email = lambda e: (e or "").strip().lower()
+    por_email = {email(r.get("email")): uid for uid, r in cadastro.items() if r.get("email")}
+    nome_de, pago, comprou = {}, set(), Counter()
+    if a.planos:
+        for r in ler(a.planos):
+            uid = por_email.get(email(r.get("E-mail")))
+            if not uid:
+                avisos["planos: e-mail que não está na lista de usuários"] += 1
+                continue
+            if r.get("Nome"):
+                primeiro = r["Nome"].split()[0]
+                nome_de[uid] = primeiro[:1].upper() + primeiro[1:]
+            if (r.get("Plano") or "").lower() not in ("", "gratuito"):
+                pago.add(uid)
+    if a.vendas:
+        for r in ler(a.vendas):
+            if (r.get("Situação") or "Aprovada") != "Aprovada":
+                continue
+            uid = por_email.get(email(r.get("E-mail")))
+            if uid:
+                comprou[uid] += 1
+            else:
+                avisos["vendas: e-mail que não está na lista de usuários"] += 1
 
     # ---- 1. correção na numeração canônica + % de acerto por questão
     correcoes = {}
@@ -208,7 +272,9 @@ def main():
         r1, r2 = d1.get(aid), d2.get(aid)
         cad = cadastro.get(aid, {})
         L = {c: "" for c in BASE_COLS}
-        L.update(aluno_id=aid, nome=cad.get("nome", ""), tipo_conta=cad.get("tipo_conta", ""),
+        ja = aid in pago or aid in comprou
+        L.update(aluno_id=aid, nome=cad.get("nome") or nome_de.get(aid, ""),
+                 tipo_conta=cad.get("tipo_conta") or ("pagante" if ja else "gratuito"), ja_comprou="sim" if ja else "nao",
                  dia1_lancado="sim" if r1 else "nao", dia2_lancado="sim" if r2 else "nao",
                  caderno_dia1=(r1 or {}).get("cor_caderno", ""), caderno_dia2=(r2 or {}).get("cor_caderno", ""),
                  lingua=(r1 or {}).get("lingua", ""))
@@ -277,6 +343,8 @@ def main():
     # ---- 5. resumo
     sem_texto = [k for k in top if not antigos_q.get(k[1], {}).get("titulo")]
     print(f"{len(linhas)} alunos -> {a.saida}")
+    print(f"com nome: {sum(1 for l in linhas if l['nome'])} · já compraram/pagos (grupo V): {sum(1 for l in linhas if l['ja_comprou'] == 'sim')}"
+          f" (plano pago: {len(pago)}, vendas: {len(comprou)})")
     print(f"dia 1: {len(d1)} · dia 2: {len(d2)} · os dois completos: {len(completos)} · com curso válido: {sum(1 for l in linhas if l['curso_id'])}")
     print(f"{len(cursos)} cursos+IES · {sum(1 for c in cursos.values() if c['nota_top10'])} com {a.min_alunos_curso}+ alunos (têm nota dos 10%)")
     print("área prioritária:", dict(Counter(l["area_prioritaria"] for l in linhas if l["area_prioritaria"])))

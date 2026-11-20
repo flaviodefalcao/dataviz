@@ -14,6 +14,8 @@ Lê de entrada/ (pega o arquivo mais recente de cada tipo):
     matrix-gabarito-2026-dia2-respostas-alunos-*.csv
     matrix-opcoes-sisu-2026-*.csv
     matrix-usuarios-*.csv
+    vendas*.csv          (opcional) vendas aprovadas: Destrinchando / Revisão Enem  -> grupo V
+    campanhas*.xlsx      (opcional) usuários do Matrix com Nome e Plano (pago/gratuito) -> nome e grupo V
 
 Grava em saida/:
     base_alunos.csv     1 linha por aluno, só os dados dele (~23 colunas)
@@ -37,6 +39,8 @@ PADROES = {
     "dia2": "matrix-gabarito-2026-dia2-respostas-alunos-*.csv",
     "sisu": "matrix-opcoes-sisu-2026-*.csv",
     "usuarios": "matrix-usuarios-*.csv",
+    "vendas": "vendas*.csv",
+    "planos": "campanhas*.xlsx",
 }
 
 
@@ -68,7 +72,7 @@ def main():
     if faltando:
         raise SystemExit(f"Faltam em {a.entrada}/: " + ", ".join(faltando))
     for k, v in arq.items():
-        print(f"{k:<9} {v.name if v else '(não encontrado: sem grupos M)'}")
+        print(f"{k:<9} {v.name if v else '(não encontrado)'}")
     saida = Path(a.saida)
     saida.mkdir(parents=True, exist_ok=True)
 
@@ -77,8 +81,9 @@ def main():
 
     base = saida / "base_alunos.csv"
     cmd = [AQUI / "montar_base.py", "--dia1", arq["dia1"], "--dia2", arq["dia2"], "--sisu", arq["sisu"], "-o", base]
-    if arq["usuarios"]:
-        cmd += ["--usuarios", arq["usuarios"]]
+    for k in ("usuarios", "vendas", "planos"):
+        if arq[k]:
+            cmd += [f"--{k}", arq[k]]
     rodar(cmd)
 
     cmd = [AQUI / "gerar_site.py", base, "-o", saida, "--dominio", a.dominio]

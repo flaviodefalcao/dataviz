@@ -46,6 +46,8 @@ def ler_csv(caminho):
 
 
 CANONICA = "Azul"  # o número canônico (link do Matrix) é o número no caderno Azul
+CAMADAS_OFERTA = {"SEGURO", "SEGURO_BF", "FASE2", "C_BF"}  # cards de venda: o grupo V não recebe
+CAMPOS_OFERTA = ("seguro_", "fase2_", "proposta_")
 
 
 class Refs:
@@ -163,6 +165,10 @@ def montar_linha(a, refs, bf=False, fase2=False, dominio="SEU-DOMINIO", avisos=N
     if bf:
         camadas += G["camadas_bf"].split()
     tem_fase2 = fase2 and G["recebe_fase2"] == "sim"
+    ja_comprou = a.get("ja_comprou") == "sim" and "V" in refs.grupos
+    if ja_comprou:  # grupo V: mesmo diagnóstico do grupo de origem, sem nenhum card de venda, + camada V
+        camadas = [c for c in camadas if c not in CAMADAS_OFERTA]
+        tem_fase2 = False
     if tem_fase2:
         camadas.append("FASE2")
 
@@ -196,6 +202,9 @@ def montar_linha(a, refs, bf=False, fase2=False, dominio="SEU-DOMINIO", avisos=N
         if c not in refs.copy:
             avisos[f"camada de copy inexistente: {c}"].append(a["aluno_id"])
         texto.update(refs.copy.get(c, {}))
+    if ja_comprou:
+        texto = {k: v for k, v in texto.items() if not k.startswith(CAMPOS_OFERTA)}
+        texto.update(refs.copy.get("V", {}))
     texto = {k: preencher(v, var) for k, v in texto.items()}
     if not a.get("nome"):  # sem nome: "{nome}, seus 24 pontos…" vira "Seus 24 pontos…"
         texto = {k: re.sub(r"^\{nome\}, (.)", lambda m: m.group(1).upper(), v) for k, v in texto.items()}
@@ -205,6 +214,9 @@ def montar_linha(a, refs, bf=False, fase2=False, dominio="SEU-DOMINIO", avisos=N
     L["aluno_id"], L["nome"] = a["aluno_id"], a.get("nome", "")
     L["grupo"] = (G["grupo_bf"] or grupo) if bf else grupo
     L["rotulo_previa"] = preencher((G["rotulo_previa_bf"] if bf and G["rotulo_previa_bf"] else G["rotulo_previa"]), var)
+    if ja_comprou:
+        L["grupo"] = "V"
+        L["rotulo_previa"] = preencher(refs.grupos["V"]["rotulo_previa"], {**var, "origem": grupo})
 
     dia_area = {x: refs.areas[x]["dia"] for x in ORDEM_AREAS}
     cor = a.get(f'caderno_dia{dia_area.get(area, "")}', "") if area else ""
