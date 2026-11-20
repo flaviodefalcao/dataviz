@@ -107,16 +107,7 @@ As regras que estão no código, e não em texto:
 
 ## O que falta confirmar ou completar
 
-As tabelas de `dados/` foram extraídas das 14 linhas da prévia, então só cobrem o que aparece nelas:
-
-1. **`ref_questoes.csv`** tem 14 questões. Faltam as 15 mais acertadas de cada área (60), com a explicação de todas as alternativas.
-2. **`ref_numeracao.csv`** tem 44 pares. Faltam as 4 cores × 180 questões, a partir dos gabaritos oficiais. LC 1–5 depende da língua.
-3. **Faixas do plano (`acertos_min`/`acertos_max`)** são **provisórias**: cobrem os acertos vistos na prévia, mas os cortes reais não aparecem nela. Humanas só tem 1 faixa nos exemplos, então quem tiver poucos acertos em CH receberia "Humanas pode compensar a sua área mais fraca".
-4. **`ref_cursos.csv`**: a `nota_top10` de Direito/UFU (714) foi deduzida do exemplo C. Os pesos estão vazios. Hoje `area_prioritaria` e `area_mais_perto` vêm prontas na base. Com os pesos e a média de cada área por curso, dá para calculá-las no script.
-5. **Pontos de uma fácil / difícil** só existem para CN (24/11) e CH (14/8). Faltam LC e MT.
-6. **Copy de Black Friday** só existe para A (Seguro) e C (proposta). Com `--bf-aberta`:
-   - A_topo, A0 e D usam o `SEGURO_BF` do A, conforme as instruções;
-   - **B, E e M continuam com "Me avise quando abrir"**, porque não há copy de BF para eles. É preciso escrever essas camadas (`B_BF`, `E_BF`, `M_BF`) em `copy.csv` e incluí-las em `grupos.csv`.
-7. **Seguro Aprovação** fala em "Extensivo Medicina 2027". Se A, A_topo, A0 ou D tiverem alunos de outros cursos, falta a copy para eles.
-8. **Arredondamento:** a média e a distância são arredondadas como na prévia (0,5 vai para o par: 752,5 → 752). No exemplo do A0, a média exibida (762) não é a média das notas inteiras (761,25), por isso `media` está explícita na base de exemplo. Na base real, use a média sem arredondar.
-9. **Domínio:** os links usam `SEU-DOMINIO`. Passe o real com `--dominio`.
+Com os exports de 18/11, `montar_base.py` + `scripts/inferir_gabarito.py` já preenchem o gabarito, a numeração
+de todas as cores, o % de acerto, as 15 fáceis de cada área e a nota dos 10% de cada curso. A lista do que ainda
+falta (cadastro com nome, textos de 46 questões, pesos por curso, cortes do plano, copy de BF para B, E e M) está em
+**COMO_GERAR.md → "Antes de ir para produção"**.

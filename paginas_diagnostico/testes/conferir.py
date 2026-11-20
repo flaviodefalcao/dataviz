@@ -17,7 +17,7 @@ IGNORAR = {"rotulo_previa"}  # só aparece na prévia; a contagem de pessoas vem
 
 
 def main():
-    refs = M.Refs()
+    refs = M.Refs(AQUI / "dados_exemplo")  # tabelas congeladas da prévia de 18/11
     esperado = {r["aluno_id"]: r for r in M.ler_csv(AQUI / "alunos_exemplo.csv")}
     flags = {r["aluno_id"]: r for r in M.ler_csv(AQUI / "flags_exemplos.csv")}
     avisos = defaultdict(list)

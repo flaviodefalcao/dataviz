@@ -124,7 +124,7 @@ def classificar(a, refs):
     if any(num(a.get(f"nota_{x}")) is None for x in ORDEM_AREAS):
         return "H", None
     curso = refs.cursos.get(a.get("curso_id", ""))
-    if not curso:
+    if not curso or num(curso.get("nota_top10")) is None:
         return "E", None
     dist = num(curso["nota_top10"]) - media_de(a)
     if abs(dist) < 5:
@@ -168,6 +168,10 @@ def montar_linha(a, refs, bf=False, fase2=False, dominio="SEU-DOMINIO", avisos=N
 
     area = a.get("area_prioritaria", "")
     curso = refs.cursos.get(a.get("curso_id", ""), {})
+    if grupo == "E":
+        curso = {}
+    if not a.get("nome"):
+        avisos["aluno sem nome: o texto fica \", seus 24 pontos…\" (traga o nome no cadastro)"].append(a["aluno_id"])
     modelos_area = refs.modelos.get(area, [])
     pcts = [int(m["pct_acerto"]) for m in modelos_area] or [0]
     ref_area = refs.areas.get(area, {})
@@ -179,7 +183,7 @@ def montar_linha(a, refs, bf=False, fase2=False, dominio="SEU-DOMINIO", avisos=N
         "area": ref_area.get("nome", ""), "area_mais_perto": refs.areas.get(a.get("area_mais_perto", ""), {}).get("nome", ""),
         "curso": curso.get("curso", ""), "ies": curso.get("ies", ""),
         "na_ies": f'{curso.get("artigo_ies", "na")} {curso.get("ies", "")}' if curso else "",
-        "nota_top10": curso.get("nota_top10", ""),
+        "nota_top10": inteiro(curso.get("nota_top10")) if curso else "",
         "considerando": f', considerando {curso["curso"]}' if curso else "",
         "media": inteiro(media_de(a)) if grupo not in ("F", "G", "H", "M_aluno", "M_gratis") else "",
         "pontos": str(abs(int(round(dist)))) if dist is not None else "",
@@ -247,14 +251,14 @@ def montar_linha(a, refs, bf=False, fase2=False, dominio="SEU-DOMINIO", avisos=N
         for i, cod in enumerate([area] + [x for x in ORDEM_AREAS if x != area], 1):
             p = f"area{i}_"
             f = faixa_plano(refs, cod, a.get(f"acertos_{cod}"), avisos)
-            L.update({p + "codigo": cod, p + "nota": a.get(f"nota_{cod}", ""), p + "acertos": a.get(f"acertos_{cod}", ""),
+            L.update({p + "codigo": cod, p + "nota": inteiro(a.get(f"nota_{cod}")), p + "acertos": a.get(f"acertos_{cod}", ""),
                       p + "titulo": f.get("titulo", ""), p + "texto": f.get("texto", ""), p + "itens": f.get("itens", ""), p + "como": f.get("como", "")})
 
     if "PARCIAL" in camadas:
         for cod in ORDEM_AREAS:
             lancou = a.get(f"dia{dia_area[cod]}_lancado") == "sim"
             nota = a.get(f"nota_{cod}", "")
-            L[f"parcial_{cod}"] = nota if (lancou and nota) else ("incompleta" if lancou else "falta lançar")
+            L[f"parcial_{cod}"] = inteiro(nota) if (lancou and nota) else ("incompleta" if lancou else "falta lançar")
 
     if "M" in camadas:  # as 20 questões modelo, caderno Azul, agrupadas por área
         i = 0

@@ -3,3 +3,7 @@ __pycache__/
 paginas_diagnostico/build/
 paginas_diagnostico/base_alunos_ficticia.csv
 paginas_diagnostico/alunos.csv
+paginas_diagnostico/base_alunos.csv
+paginas_diagnostico/*respostas-alunos*.csv
+paginas_diagnostico/*opcoes-sisu*.csv
+paginas_diagnostico/cadastro*.csv

@@ -1,118 +1,133 @@
 # Como gerar o site (guia para o programador)
 
-Só precisa de **Python 3.8+**, sem nenhuma biblioteca extra.
+Só precisa de **Python 3.8+**, sem nenhuma biblioteca extra. São 3 comandos, todos dentro de `paginas_diagnostico/`.
 
-## 1. Testar agora, com a base fictícia
-
-```bash
-cd paginas_diagnostico
-python3 scripts/gerar_base_ficticia.py                    # cria base_alunos_ficticia.csv (81.550 alunos, ~2 s)
-python3 gerar_site.py base_alunos_ficticia.csv --amostra 3 # 3 páginas por grupo + build/site/_previa.html
+```
+exports do Matrix ──> montar_base.py ──> base_alunos.csv ──> gerar_site.py ──> build/site/<aluno_id>.html
+ (dia 1, dia 2,          (+ dados/)        (1 linha/aluno)     (montar_csv.py + gerar.py)
+  Sisu, cadastro)
 ```
 
-Abra `build/site/_previa.html` no navegador para ver todos os grupos de uma vez.
+## Passo a passo com os dados reais
 
-> A base fictícia tem nomes e notas **inventados**, só para testar. Ela respeita a quantidade de alunos
-> de cada grupo da prévia (A 4.770, A topo 1.457, A0 486, B 2.025, C 10.035, D 1.842, E 17.496, F 21.377,
-> G 11.337, H 214, M aluno 2.469, M grátis 8.042).
+### 0. Arquivos de entrada
 
-## 2. Gerar com os dados reais
+| Arquivo | De onde vem | Colunas usadas |
+|---|---|---|
+| `dia1.csv` | export `matrix-gabarito-2026-dia1-respostas-alunos-*.csv` | `aluno_id`, `cor_caderno`, `lingua`, `q1`…`q90`, `nota_*`, `acertos_*` |
+| `dia2.csv` | export `matrix-gabarito-2026-dia2-respostas-alunos-*.csv` | `aluno_id`, `cor_caderno`, `q91`…`q180`, `nota_*`, `acertos_*` |
+| `sisu.csv` | export `matrix-opcoes-sisu-2026-*.csv` | `user_id`, `opcao`, `curso`, `sigla` |
+| `cadastro.csv` | **falta exportar** | `aluno_id;nome;tipo_conta` (`pagante` = aluno do Chapéu, `gratuito`). Deve trazer **todos** os usuários, inclusive os que não lançaram gabarito (grupos M) |
 
-1. Exporte do banco um `base_alunos.csv` no formato da seção 3.
-2. Rode:
+Sem o cadastro, a página sai sem nome (", seus 24 pontos começam em…") e não existem os grupos M.
+
+### 1. Gabarito e numeração (só uma vez, ou quando sair o gabarito oficial)
 
 ```bash
-python3 gerar_site.py base_alunos.csv \
+python3 scripts/inferir_gabarito.py --dia1 dia1.csv --dia2 dia2.csv      # ~10 min → dados/gabarito.csv
+```
+
+Infere, a partir das respostas e dos acertos de cada aluno, o gabarito de cada cor e a numeração de cada cor
+para o número canônico (o do caderno Azul, que é o número usado no link do Matrix). Nos exports de 18/11, o
+gabarito inferido reproduz **100%** dos acertos informados, em todas as cores. A anulada é a MT 159 (Azul).
+Os 44 pares de numeração já conhecidos batem. `dados/gabarito.csv` já está pronto no repositório. Rode de novo só se
+mudar o gabarito. Se tiver o gabarito oficial, pode montar o arquivo à mão no mesmo formato.
+
+### 2. Base dos alunos
+
+```bash
+python3 montar_base.py --dia1 dia1.csv --dia2 dia2.csv --sisu sisu.csv --cadastro cadastro.csv   # ~25 s
+```
+
+Grava `base_alunos.csv` e atualiza as tabelas de `dados/` com os mesmos dados:
+- `ref_cursos.csv`: cada curso + IES escolhido, com a **nota dos 10% mais bem colocados** (P90 da média dos
+  alunos do Matrix que escolheram o curso em 1ª ou 2ª opção) e o P90 de cada área. Curso com menos de 10
+  alunos no Matrix fica sem nota dos 10%, e o aluno vai para o grupo E (`--min-alunos-curso` muda o limite).
+  Ajustes feitos à mão nas colunas `curso`, `ies`, `artigo_ies`, `peso_*` e `obs` **são preservados** quando o script roda de novo.
+- `ref_questoes.csv`: % de acerto e gabarito de todas as questões, mais a marcação das 15 mais fáceis de cada área.
+  Os textos (título, "por que a X engana", coelho) são mantidos.
+- `ref_numeracao.csv` e `ref_modelos.csv` (% de acerto).
+
+O script imprime avisos: alunos sem nome, cursos pequenos e questões fáceis ainda sem texto.
+
+### 3. Site
+
+```bash
+python3 gerar_site.py base_alunos.csv --amostra 3            # revisão: 3 por grupo + build/site/_previa.html
+python3 gerar_site.py base_alunos.csv \                       # produção
     --dominio www.seusite.com.br \
     --logo-topo  https://cdn.seusite.com.br/diagnostico/logo_topo.png \
     --logo-marca https://cdn.seusite.com.br/diagnostico/logo_marca.png
 ```
 
-3. Leia o `build/relatorio.txt`, que traz a contagem por grupo, avisos (questão sem conteúdo, numeração faltando,
-   faixa de plano faltando) e campos obrigatórios vazios. **Corrija em `dados/` e rode de novo** até não sobrar aviso.
-4. Publique a pasta `build/site/` como arquivos estáticos. É uma página por aluno: `<aluno_id>.html`.
+Publique `build/site/` como arquivos estáticos, uma página por aluno (`<aluno_id>.html`). Leia `build/relatorio.txt`
+antes de publicar: contagem por grupo, avisos e campos obrigatórios vazios.
 
-**Passe os logos por URL.** Sem URL, o logo vai embutido em base64 em toda página: ~105 KB por página e
-~8,5 GB no total. Com URL: ~22 KB por página e ~1,8 GB no total.
+**Passe os logos por URL.** Embutidos, cada página fica com ~105 KB (~8 GB no total). Com URL, ~22 KB (~1,7 GB).
 
-### Datas: só muda a flag, a base é a mesma
-
-| Quando | Comando |
+| Quando | Flags do `gerar_site.py` |
 |---|---|
-| Até ~25/11 | `python3 gerar_site.py base_alunos.csv ...` |
-| ~25/11 (2ª fase) | `... --fase2-aberta` (liga o card de 2ª fase para A topo, A0 e D) |
-| A partir de 27/11 (Black Friday) | `... --bf-aberta --fase2-aberta` (troca "Me avise" por checkout) |
+| Até ~25/11 | nenhuma |
+| ~25/11 (2ª fase) | `--fase2-aberta` |
+| A partir de 27/11 (Black Friday) | `--bf-aberta --fase2-aberta` |
 
-### Tempo (81.550 alunos, 1 CPU)
+### Resultado com os exports de 18/11 (sem cadastro)
 
-| Etapa | Tempo |
+76.878 alunos com gabarito: A 4.079 · A topo 1.465 · A0 1.068 · B 2.050 · C 7.093 · D 1.282 · E 23.740 ·
+F 22.367 · G 12.228 · H 1.506. Os grupos M dependem do cadastro.
+Tempo: montar_base 25 s, montar_csv 25 s, páginas ~1,5 min.
+
+## Regras usadas para montar a base (`montar_base.py`)
+
+| Campo | Regra |
 |---|---|
-| `base_alunos.csv` → `build/alunos.csv` (447 MB) | ~22 s |
-| Páginas HTML | ~1,5 min (≈ 6,5 s a cada 5.000) |
+| grupo | M: sem nenhum dia · F/G: um dia só · H: os dois dias, mas alguma área sem nota · E: sem curso (ou curso com < 10 alunos) · pelo resto, `distância = nota_top10 − média`: D ≤ −5 · A0 \|d\| < 5 · A_topo 5–20 · A 20–60 · B > 60 Medicina · C > 60 outros |
+| curso | 1ª opção do Sisu (ou a 2ª, se não houver 1ª), agrupada por curso + IES |
+| área prioritária | maior `(P90 da área no curso − nota do aluno) × peso`. Os pesos vêm de `ref_cursos.peso_*`, e vazio = 1. Sem curso, usa o P90 de todos os alunos |
+| área mais perto (B) | a de menor déficit, tirando a prioritária |
+| fáceis | as 15 questões da área prioritária com maior % de acerto, sem língua estrangeira e sem anulada. Entram as que o aluno errou ou deixou em branco (`--max-faceis` limita a quantidade) |
+| modelos | as 5 questões modelo da área prioritária que o aluno errou ou deixou em branco |
 
-## 3. O que o export do banco precisa ter (`base_alunos.csv`)
+Conferido com o único aluno da prévia que aparece nos exports (exemplo A topo): a área prioritária, as fáceis
+(118, 131, 119, com C, branco e B), os modelos (116, 101) e a média (767,75) saem iguais.
 
-UTF-8, separador `;`, 1 linha por aluno, com estas colunas e este cabeçalho (a ordem não importa).
-Listas dentro de uma célula vão separadas por `|`.
+## Sem dados reais: base fictícia
 
-| Coluna | Tipo | Exemplo | Origem / regra |
-|---|---|---|---|
-| `aluno_id` | texto único | `a8f3k2…` | Vira o nome do arquivo. **Use um id não sequencial ou um token**, já que a página é pessoal |
-| `nome` | texto | `Ana` | Só o primeiro nome |
-| `tipo_conta` | `pagante` / `gratuito` | `pagante` | Aluno do Chapéu ou usuário gratuito do Matrix |
-| `dia1_lancado` | `sim` / `nao` | `sim` | Lançou o gabarito do dia 1 (LC + CH) |
-| `dia2_lancado` | `sim` / `nao` | `sim` | Lançou o gabarito do dia 2 (CN + MT) |
-| `caderno_dia1`, `caderno_dia2` | cor | `Amarelo` | Cor do caderno lançado em cada dia |
-| `lingua` | `ingles` / `espanhol` | `ingles` | Reservado (LC 1–5) |
-| `nota_LC`, `nota_CH`, `nota_CN`, `nota_MT` | número | `724` | Nota TRI estimada. **Vazia** se o dia não foi lançado ou se a área ficou incompleta |
-| `acertos_LC` … `acertos_MT` | 0–45 | `33` | Acertos na área |
-| `media` | número | `752.5` | Média das 4 objetivas, **sem arredondar**. Vazia = o script calcula |
-| `curso_id` | texto | `MEDICINA_UFMG` | 1ª opção no Sisu. Precisa existir em `dados/ref_cursos.csv`. Vazio = sem curso |
-| `area_prioritaria` | `LC`/`CH`/`CN`/`MT` | `CN` | Área de maior déficit em relação aos alunos do mesmo curso, ponderado pelo peso |
-| `area_mais_perto` | área | `CH` | Só usado no grupo B |
-| `faceis_ids` | lista | `129\|107\|97` | Entre as 15 questões **da área prioritária** com maior % de acerto: as que o aluno errou ou deixou em branco. **Número canônico** (= caderno Azul), por % de acerto decrescente, no máximo 5 |
-| `faceis_marcadas` | lista | `E\|-\|B` | Letra marcada em cada questão de `faceis_ids`, na mesma ordem. `-` = em branco |
-| `modelos_errados_ids` | lista | `116\|125` | Questões modelo da área prioritária que o aluno errou (número canônico). Vazio = acertou todas |
-
-**O grupo (A, A0, B… M) é calculado pelo script**, não vem do banco. A regra está em `montar_csv.py`, na função `classificar()`.
-
-Exemplo de linha:
-```
-aluno_id;nome;tipo_conta;dia1_lancado;dia2_lancado;caderno_dia1;caderno_dia2;lingua;nota_LC;nota_CH;nota_CN;nota_MT;acertos_LC;acertos_CH;acertos_CN;acertos_MT;media;curso_id;area_prioritaria;area_mais_perto;faceis_ids;faceis_marcadas;modelos_errados_ids
-a8f3k2;Ana;gratuito;sim;sim;Amarelo;Amarelo;ingles;687;759;724;840;39;41;33;36;752.5;MEDICINA_UFMG;CN;;129|107|97;E|E|E;116|125|101
+```bash
+python3 scripts/gerar_base_ficticia.py            # 81.550 alunos inventados, nas contagens da prévia
+python3 gerar_site.py base_alunos_ficticia.csv --amostra 3
 ```
 
-## 4. Mapa dos arquivos
+## Testes
+
+```bash
+python3 testes/conferir.py      # remonta as 14 páginas da prévia (tabelas congeladas em testes/dados_exemplo): 0 diferenças
+```
+
+## Mapa dos arquivos
 
 ```
 paginas_diagnostico/
-├── gerar_site.py          ← o único comando que o programador precisa rodar
-├── montar_csv.py          base compacta + dados/ → alunos.csv de 324 colunas (regras de grupo e de copy)
-├── gerar.py               alunos.csv + template.html → páginas (não mexer)
-├── template.html          layout (não mexer)
-├── dados/                 tabelas: questões, numeração, modelos, plano, cursos, áreas, grupos, copy
-├── scripts/
-│   ├── gerar_base_ficticia.py
-│   └── extrair_dos_exemplos.py
-├── testes/
-│   ├── conferir.py        teste de regressão: remonta as 14 páginas da prévia (tem que dar 0 diferenças)
-│   ├── base_exemplos.csv
-│   └── alunos_exemplo.csv
+├── montar_base.py         exports do Matrix → base_alunos.csv (+ atualiza dados/)
+├── gerar_site.py          base_alunos.csv → build/site/  (chama montar_csv.py e gerar.py)
+├── montar_csv.py          base compacta + dados/ → alunos.csv de 324+ colunas (regras de grupo e de copy)
+├── gerar.py, template.html   layout das páginas (não mexer)
+├── dados/                 gabarito, numeração, questões, modelos, plano, cursos, áreas, grupos, copy
+├── scripts/               inferir_gabarito.py, gerar_base_ficticia.py, extrair_dos_exemplos.py
+├── testes/                conferir.py + exemplos da prévia
 ├── COMO_GERAR.md          este guia
-└── OTIMIZACAO.md          por que a base é assim e o que ainda falta completar em dados/
+└── OTIMIZACAO.md          por que a base é assim, e o que falta completar
 ```
 
-Depois de qualquer mudança em `dados/` ou nos scripts, rode `python3 testes/conferir.py`.
+**Não versionar dados pessoais.** `base_alunos.csv`, os exports e `build/` estão no `.gitignore`.
 
-## 5. Antes de ir para produção
+## Antes de ir para produção
 
-Os dados de referência em `dados/` saíram das 14 páginas da prévia e **ainda estão incompletos**. O
-`relatorio.txt` vai acusar o que faltar, e a lista completa está no fim do `OTIMIZACAO.md`. Os principais:
-
-- todas as questões no `ref_questoes.csv`: as 15 mais acertadas de cada área, com a explicação de cada alternativa;
-- a numeração das 4 cores no `ref_numeracao.csv` (o Azul não precisa: o número do Azul é o canônico);
-- todos os cursos no `ref_cursos.csv`, com a nota dos 10% e os pesos;
-- os cortes de acertos do `textos_plano.csv`;
-- a copy de Black Friday para os grupos B, E e M.
-
-A base fictícia só usa Natureza e Humanas como área prioritária, porque são as únicas áreas com questões fáceis em `dados/`.
+1. **Cadastro** (`nome`, `tipo_conta`, todos os usuários): sem ele a página fica sem nome e não há grupos M.
+2. **Textos de 46 das 60 questões fáceis** (título, "por que a X engana" por alternativa, coelho) em
+   `dados/ref_questoes.csv`. Só há texto para as 14 questões que estavam na prévia. O `montar_base.py` lista quais faltam.
+3. **Pesos por curso** (`ref_cursos.peso_*`). Sem pesos, **Matemática é a área prioritária de 64% dos alunos**
+   (a escala de MT na TRI é mais espalhada). Na prévia, para Medicina, a área prioritária costumava ser Natureza.
+4. **Cortes de acertos** do plano (`textos_plano.csv`), hoje provisórios. Humanas só tem 1 faixa.
+5. **Copy de Black Friday** para B, E e M.
+6. Revisar a sigla e o artigo de cada IES em `ref_cursos.csv` (ex.: "UFSCAR" → "UFSCar"; "no IFMG").

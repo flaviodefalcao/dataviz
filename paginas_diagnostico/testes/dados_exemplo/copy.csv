@@ -1,0 +1,132 @@
+﻿camada;campo;texto
+COMUM;titulo_pagina;Seu diagnóstico · Enem 2026
+COMUM;rodape_texto;Esta página é só sua. Os números são estimativas feitas a partir do seu gabarito, corrigido com o gabarito oficial do Inep, sem a redação. A nota oficial do Enem sai em janeiro. Nenhuma estimativa garante aprovação. As taxas de acerto são dos alunos que lançaram o gabarito no Matrix.
+DIAG;topo_titulo;{nome}, o seu resultado, questão por questão
+DIAG;faceis_titulo;Você errou {n_faceis} das 15 questões de {area} que mais alunos acertaram
+DIAG;faceis_rodape;Na nota do Enem, uma questão fácil certa vale bem mais que uma difícil. Na nossa base, cada fácil de {area} rendeu em média {pontos_facil} pontos, contra {pontos_dificil} de uma difícil. Parte da sua distância está em conteúdo que você já viu.
+DIAG;modelos_titulo;Você errou {n_modelos} das 5 questões de {area} que seguiram modelos das nossas aulas
+DIAG;modelos_titulo_todos;Você errou as 5 questões de {area} que seguiram modelos das nossas aulas
+DIAG;modelos_titulo_nenhum;Você acertou as 5 questões de {area} que seguiram modelos das nossas aulas
+DIAG;modelos_nota;Só entre {pct_min}% e {pct_max}% dos alunos do Matrix acertaram cada uma. Os números são os do seu caderno.
+DIAG;modelos_nota_nenhum;
+DIAG;modelos_resumo;Errar essas é comum. É exatamente o que um modelo bem estudado resolve.
+DIAG;modelos_resumo_nenhum;Só entre {pct_min}% e {pct_max}% dos alunos do Matrix acertaram cada uma. É esse tipo de questão que separa as notas mais altas, e você já acerta.
+DIAG;plano_titulo;Por onde começar: {area}
+DIAG;plano_nota;As suas quatro notas, cada uma com a orientação dos nossos professores para o seu número de acertos. A primeira é a que mais pesa no seu caso{considerando}.
+CURSO;curso_nome;{curso}
+CURSO;curso_opcao;1ª opção
+CURSO;curso_ies_linha;{ies} · comparação com os alunos do Matrix
+CURSO;curso_media;{media}
+CURSO;curso_ref_texto;Nota dos 10% mais bem colocados
+CURSO;curso_ref_nota;{nota_top10}
+CURSO;curso_aviso;Comparação com os alunos do Matrix que escolheram {curso} {na_ies}. Média das quatro provas objetivas, sem a redação. Não é a nota de corte do Sisu, que só sai na inscrição.
+SEGURO;seguro_eyebrow;Seguro Aprovação
+SEGURO;seguro_titulo;Queremos estar com você nesse momento, seja qual for o resultado
+SEGURO;seguro_texto1;Você garante o Extensivo Medicina 2027 com o preço promocional de Black Friday. Se a aprovação vier e você comprovar, a gente devolve o seu dinheiro.
+SEGURO;seguro_texto2;Assim você não precisa escolher entre torcer pela vaga e se preparar para 2027.
+SEGURO;seguro_nota;O preço promocional abre na quinta, 27/11.
+SEGURO;seguro_cta_texto;Me avise quando abrir
+SEGURO;seguro_cta_url;https://{dominio}/bf/lista-vip?{utm}&utm_content={utm_grupo}
+SEGURO;seguro_link_texto;Como funciona o Seguro Aprovação
+SEGURO;seguro_link_url;https://{dominio}/seguro-aprovacao?{utm}&utm_content={utm_grupo}
+SEGURO_BF;seguro_nota;Preço de Black Friday até domingo, 30/11, 23h59.
+SEGURO_BF;seguro_cta_texto;Garantir com o Seguro Aprovação
+SEGURO_BF;seguro_cta_url;https://{dominio}/checkout/extensivo_medicina?{utm}&utm_content={utm_grupo}&seguro=aprovacao
+FASE2;fase2_eyebrow;Para quem vai fazer 2ª fase
+FASE2;fase2_titulo;Você está perto. Vamos juntos até a aprovação
+FASE2;fase2_texto1;Se você vai fazer a 2ª fase de algum vestibular, os aulões de 2ª fase foram feitos para esse momento: o que mais cai, com os professores do Chapéu do Mago, até o dia da prova.
+FASE2;fase2_cta_texto;Quero os aulões de 2ª fase
+FASE2;fase2_cta_url;https://{dominio}/checkout/aulao-2-fase?{utm}&utm_content=fase2_{utm_grupo}
+A;hero_titulo;{nome}, seus {pontos} pontos começam em {area}
+A;hero_texto;Você está perto: são {pontos} pontos até os mais bem colocados em {curso} {na_ies}. E eles não estão espalhados igual pela prova: {area} é onde você está mais abaixo dos outros alunos, considerando o peso dela em {curso}. Abaixo, questão por questão.
+A;curso_ok;não
+A;curso_status;Na disputa
+A;curso_distancia;Faltam {pontos} pontos
+A_topo;hero_titulo;{nome}, seus {pontos} pontos começam em {area}
+A_topo;hero_texto;Você está perto: são {pontos} pontos até os mais bem colocados em {curso} {na_ies}. E eles não estão espalhados igual pela prova: {area} é onde você está mais abaixo dos outros alunos, considerando o peso dela em {curso}. Abaixo, questão por questão.
+A_topo;curso_ok;não
+A_topo;curso_status;Na disputa
+A_topo;curso_distancia;Faltam {pontos} pontos
+A0;hero_titulo;Você está empatado em {curso}. {area} pode decidir a vaga
+A0;hero_texto;A sua média está praticamente igual à dos mais bem colocados em {curso} {na_ies}. Nessa posição, uma ou duas questões mudam o resultado, e as que mais pesam no seu caso estão em {area}.
+A0;curso_ok;sim
+A0;curso_status;Empatado
+A0;curso_distancia;Menos de 5 pontos de diferença
+B;hero_titulo;Talvez não seja dessa vez em {curso}. Mas o caminho já tem um começo
+B;hero_texto;São {pontos} pontos até os mais bem colocados {na_ies}. Sabemos que não é o que você queria ler, e queremos que saiba que estamos aqui com você. Olhamos o seu gabarito questão por questão: em {area_mais_perto}, você está mais perto do que imagina, e {area} é a área que está segurando a sua nota. É por ela que o seu plano começa, quando você quiser.
+B;proposta_eyebrow;Estamos com você
+B;proposta_titulo;Vamos juntos até {curso}
+B;proposta_texto1;Pode não ser dessa vez, mas você não vai fazer esse caminho sozinho. O Extensivo Medicina 2027 começa por {area}, a área que está segurando a sua nota, e vai até o nível que Medicina exige.
+B;proposta_nota;O preço de Black Friday abre na quinta, 27/11. Quem pede o aviso recebe o link 2 horas antes.
+B;proposta_cta_texto;Me avise quando abrir
+B;proposta_cta_url;https://{dominio}/bf/lista-vip?{utm}&utm_content={utm_grupo}
+C;hero_titulo;Talvez não seja dessa vez em {curso}. Mas o seu ponto de partida já está aqui
+C;hero_texto;São {pontos} pontos até os mais bem colocados {na_ies}. Queremos que saiba que estamos aqui com você, e já identificamos o principal: {area} é a área que mais puxa a sua nota para baixo. Começar por ela é o caminho mais curto, e você pode começar quando quiser.
+C;proposta_eyebrow;Estamos com você
+C;proposta_titulo;Vamos começar juntos por {area}
+C;proposta_texto1;Pode não ser dessa vez, mas você não vai fazer esse caminho sozinho. O módulo de entrada do Chapéu do Mago cobre exatamente o seu nível em {area}. Se depois quiser o ano completo, o valor do módulo é abatido no Extensivo até 31/01.
+C;proposta_nota;O preço de Black Friday abre na quinta, 27/11. Quem pede o aviso recebe o link 2 horas antes.
+C;proposta_cta_texto;Me avise quando abrir
+C;proposta_cta_url;https://{dominio}/bf/lista-vip?{utm}&utm_content={utm_grupo}
+C_BF;proposta_nota;Preço de Black Friday até domingo, 30/11, 23h59.
+C_BF;proposta_cta_texto;Começar por {area}
+C_BF;proposta_cta_url;https://{dominio}/checkout/modulo_entrada?{utm}&utm_content={utm_grupo}
+C_BF;proposta_cta2_texto;Prefiro o ano completo: Extensivo 2027
+C_BF;proposta_cta2_url;https://{dominio}/checkout/extensivo?{utm}&utm_content={utm_grupo}
+C_BF;proposta_nota_final;Você tem 7 dias para desistir, com reembolso total.
+D;hero_titulo;Você está entre os 10% mais bem colocados em {curso}
+D;hero_texto;A sua média de {media} passa da nota dos 10% mais bem colocados entre os alunos do Matrix que escolheram {curso} {na_ies}. Faltam duas coisas nessa conta: a redação e {area}, onde você ainda tem espaço para subir.
+D;curso_ok;sim
+D;curso_status;Entre os 10%
+D;curso_distancia;{pontos} pontos acima
+D;alerta_eyebrow;O que essa conta ainda não considera
+D;alerta_titulo;A redação
+D;alerta_texto;É uma das cinco notas do Enem e ainda não entrou na sua média. Com ela, a sua posição pode subir ou cair. E as notas de corte se mexem até o último dia de inscrição no Sisu.
+D;indicacao_eyebrow;Conhece alguém que ficou perto da vaga?
+D;indicacao_titulo;O Matrix faz o mesmo diagnóstico para quem lançar o gabarito
+D;indicacao_texto1;Mande o link para quem fez o Enem com você. São uns 3 minutos para lançar cada dia.
+D;indicacao_cta2_texto;Copiar o link para mandar
+D;indicacao_cta2_url;https://{dominio}/gabarito?utm_source=indicacao&utm_campaign=bf2026
+E;hero_titulo;Sua média é {media}. Agora veja onde ela te leva
+E;hero_texto;Você lançou os dois dias e a sua nota estimada está completa. Falta ver em quais cursos você já está na disputa e em quais está mais perto do que imagina. No simulador, a sua nota já vem preenchida.
+E;hero_cta_texto;Ver onde a minha nota me leva
+E;hero_cta_url;https://{dominio}/sisu?{utm}&utm_content={utm_grupo}&media={media}
+E;proposta_eyebrow;Estamos com você
+E;proposta_titulo;Vamos começar juntos por {area}
+E;proposta_texto1;A gente está aqui para fazer esse caminho com você. O módulo de entrada do Chapéu do Mago cobre exatamente o seu nível em {area}. Se depois quiser o ano completo, o valor do módulo é abatido no Extensivo até 31/01.
+E;proposta_nota;O preço de Black Friday abre na quinta, 27/11. Quem pede o aviso recebe o link 2 horas antes.
+E;proposta_cta_texto;Me avise quando abrir
+E;proposta_cta_url;https://{dominio}/bf/lista-vip?{utm}&utm_content={utm_grupo}
+PARCIAL;topo_titulo;{nome}, o seu resultado até agora
+PARCIAL;hero_cta_url;https://{dominio}/gabarito?{utm}&utm_content={utm_grupo}
+F;hero_titulo;Sua nota do dia 1 está pronta. Falta a outra metade
+F;hero_texto;Linguagens e Humanas já foram recalculadas com o gabarito oficial. Sem Natureza e Matemática, não dá para comparar você com quem disputa o mesmo curso, e é essa comparação que mostra se você está perto ou longe da vaga.
+F;hero_cta_texto;Lançar o dia 2
+F;hero_cta_nota;Leva uns 3 minutos. A nota completa já sai com o gabarito oficial, e quem lança os dois dias recebe também o diagnóstico questão por questão e um plano por área.
+G;hero_titulo;Sua nota do dia 2 está pronta. Falta a outra metade
+G;hero_texto;Natureza e Matemática já foram recalculadas com o gabarito oficial. Sem Linguagens e Humanas, não dá para comparar você com quem disputa o mesmo curso, e é essa comparação que mostra se você está perto ou longe da vaga.
+G;hero_cta_texto;Lançar o dia 1
+G;hero_cta_nota;Leva uns 3 minutos. A nota completa já sai com o gabarito oficial, e quem lança os dois dias recebe também o diagnóstico questão por questão e um plano por área.
+H;hero_titulo;Falta pouco para fechar a sua nota
+H;hero_texto;Parte do seu gabarito ficou em branco, e por isso algumas áreas ainda não têm nota. Às vezes é uma resposta só que ficou para trás.
+H;hero_cta_texto;Completar meu gabarito
+H;hero_cta_nota;Leva uns 2 minutos. A nota completa já sai com o gabarito oficial.
+M;topo_titulo;{nome}, corrija a sua prova com o gabarito oficial
+M;hero_titulo;Saiu o gabarito oficial. Falta corrigir a sua prova
+M;hero_cta_texto;Corrigir minha prova
+M;hero_cta_url;https://{dominio}/gabarito?{utm}&utm_content={utm_grupo}
+M;hero_cta_nota;Uns 3 minutos por dia de prova. Você vê na hora a nota estimada por área, já com o gabarito oficial.
+M;modelos_titulo;20 questões do Enem 2026 que seguiram modelos das nossas aulas
+M;modelos_nota;Antes da prova, nas lives e aulas do Theo e dos professores do Chapéu do Mago, estes modelos foram trabalhados. Na prova, poucos acertaram. Números do caderno Azul.
+M;modelos_grupo;{area}: {pct_min}% a {pct_max}% de acerto
+M;proposta_eyebrow;Chapéu do Mago
+M;proposta_nota;O preço de Black Friday abre na quinta, 27/11. Quem pede o aviso recebe o link 2 horas antes.
+M;proposta_cta_texto;Me avise quando abrir
+M;proposta_cta_url;https://{dominio}/bf/lista-vip?{utm}&utm_content={utm_grupo}
+M;rodape_texto;As taxas de acerto são dos mais de 60 mil alunos que lançaram o gabarito no Matrix. A nota estimada é calculada com o gabarito oficial do Inep, sem a redação, e não garante aprovação. A nota oficial do Enem sai em janeiro.
+M_aluno;hero_texto;Mais de 60 mil alunos já lançaram o gabarito no Matrix e viram a nota estimada, recalculada com o gabarito oficial do Inep. Você estudou com a gente este ano: agora dá para ver, questão por questão, onde esse estudo apareceu na prova.
+M_aluno;proposta_titulo;Continue com a gente em 2027
+M_aluno;proposta_texto1;Os modelos acima foram trabalhados pelos mesmos professores com quem você estudou. O Extensivo 2027 começa com eles, e a Black Friday é o melhor momento para garantir a sua vaga.
+M_gratis;hero_texto;Mais de 60 mil alunos já lançaram o gabarito no Matrix e viram a nota estimada, recalculada com o gabarito oficial do Inep. Você criou a sua conta, mas o seu gabarito ainda não foi lançado. Se você fez o Enem, dá para ver agora a sua nota estimada, as questões que escaparam e onde ela te coloca no Sisu.
+M_gratis;proposta_titulo;Comece 2027 com quem conhece a prova
+M_gratis;proposta_texto1;Os modelos acima foram trabalhados pelos professores do Chapéu do Mago antes da prova. É com eles que o Extensivo 2027 começa.
