@@ -1,0 +1,15 @@
+﻿aluno_id;nome;tipo_conta;dia1_lancado;dia2_lancado;caderno_dia1;caderno_dia2;lingua;nota_LC;nota_CH;nota_CN;nota_MT;acertos_LC;acertos_CH;acertos_CN;acertos_MT;media;curso_id;area_prioritaria;area_mais_perto;faceis_ids;faceis_marcadas;modelos_errados_ids;_grupo_exemplo
+exemplo_01_A;Ana;;sim;sim;;Amarelo;;687;759;724;840;39;41;33;36;752.5;MEDICINA_UFMG;CN;;129|107|97;E|E|E;116|125|101;A
+exemplo_02_A_topo;Ana;;sim;sim;;Azul;;703;733;737;898;41;40;36;40;767.75;MEDICINA_UFMG;CN;;118|131|119;C|-|B;116|101;A_topo
+exemplo_03_A0;Ana;;sim;sim;;Azul;;716;718;718;893;41;40;32;40;762;MEDICINA_UFPR;CN;;127|107|103|134;E|A|E|E;116|125|120;A0
+exemplo_04_B;Ana;;sim;sim;;Amarelo;;648;721;714;752;34;39;30;27;708.75;MEDICINA_UFMG;CN;CH;106|128|118|107|131;D|C|A|E|B;116|125|120;B
+exemplo_05_C;Ana;;sim;sim;;Amarelo;;630;683;601;670;32;36;16;20;646;DIREITO_UFU;CN;;107|97|131|119;A|A|B|A;116|125|101|93|120;C
+exemplo_06_D;Ana;;sim;sim;;;;729;745;830;925;42;40;44;43;807.25;MEDICINA_UNDF;CN;;;;;D
+exemplo_07_E;Ana;;sim;sim;Amarelo;;;654;681;687;764;34;36;29;30;696.5;;CH;;62|49|84;B|C|D;60;E
+exemplo_08_F;Ana;;sim;nao;;;;549;529;;;;;;;;;;;;;;F
+exemplo_09_G;Ana;;nao;sim;;;;;;711;846;;;;;;;;;;;;G
+exemplo_10_H;Ana;;sim;sim;;;;544;585;555;;;;;;;;;;;;;H
+exemplo_11_M_aluno;Ana;pagante;nao;nao;;;;;;;;;;;;;;;;;;;M_aluno
+exemplo_12_M_gratis;Ana;gratuito;nao;nao;;;;;;;;;;;;;;;;;;;M_gratis
+exemplo_13_A_BF;Ana;;sim;sim;;Amarelo;;687;759;724;840;39;41;33;36;752.5;MEDICINA_UFMG;CN;;129|107|97;E|E|E;116|125|101;A_BF
+exemplo_14_C_BF;Ana;;sim;sim;;Amarelo;;630;683;601;670;32;36;16;20;646;DIREITO_UFU;CN;;107|97|131|119;A|A|B|A;116|125|101|93|120;C_BF

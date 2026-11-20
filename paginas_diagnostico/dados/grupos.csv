@@ -1,0 +1,13 @@
+﻿grupo;rotulo_previa;rotulo_previa_bf;utm_grupo;camadas;camadas_bf;recebe_fase2;grupo_bf
+A;A · 20 a 60 pontos{fase2_rotulo} · {pessoas} pessoas;A · depois de 27/11 (Black Friday aberta) · {pessoas} pessoas;A;COMUM DIAG CURSO SEGURO A;SEGURO_BF;nao;A_BF
+A_topo;A topo · 5 a 20 pontos{fase2_rotulo} · {pessoas} pessoas;;A;COMUM DIAG CURSO SEGURO A_topo;SEGURO_BF;sim;
+A0;A0 · empatado{fase2_rotulo} · {pessoas} pessoas;;A0;COMUM DIAG CURSO SEGURO A0;SEGURO_BF;sim;
+B;B · Medicina. mais de 60{fase2_rotulo} · {pessoas} pessoas;;B;COMUM DIAG B;;nao;
+C;C · outros cursos. mais de 60{fase2_rotulo} · {pessoas} pessoas;C · depois de 27/11 (Black Friday aberta) · {pessoas} pessoas;C;COMUM DIAG C;C_BF;nao;C_BF
+D;D · já competitivo{fase2_rotulo} · {pessoas} pessoas;;D;COMUM DIAG CURSO D SEGURO;SEGURO_BF;sim;
+E;E · sem curso no Sisu{fase2_rotulo} · {pessoas} pessoas;;E;COMUM DIAG E;;nao;
+F;F · só o dia 1{fase2_rotulo} · {pessoas} pessoas;;F;COMUM PARCIAL F;;nao;
+G;G · só o dia 2{fase2_rotulo} · {pessoas} pessoas;;G;COMUM PARCIAL G;;nao;
+H;H · gabarito incompleto{fase2_rotulo} · {pessoas} pessoas;;H;COMUM PARCIAL H;;nao;
+M_aluno;M · aluno do Chapéu sem gabarito{fase2_rotulo} · {pessoas} pessoas;;M;COMUM M M_aluno;;nao;
+M_gratis;M · usuário gratuito sem gabarito{fase2_rotulo} · {pessoas} pessoas;;M;COMUM M M_gratis;;nao;

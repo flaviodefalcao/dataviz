@@ -1,0 +1,263 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{titulo_pagina}}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#081b50;--ink:#0b2147;--muted:#5f6b7a;--line:#e4e9f1;--card:#fff;--blue:#2d51d9;--blue-soft:#e8edfd;
+        --lc:#0076bb;--lc-t:#e2f1fb;--ch:#a43e68;--ch-t:#fbe8f0;--cn:#24745f;--cn-t:#def4ea;--mt:#9c6903;--mt-t:#fcefcf;
+        --ok:#1f7a2e;--ok-t:#eefbf1;--err:#8f1d1d;--err-t:#fdeeee;--warm:#7e6c3d;--warm-t:#fffbef;--warm-l:#eee4c9}
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.55;
+       background:#e9edf8;background-image:linear-gradient(135deg,#e8ecfb 0%,#dce9ec 55%,#e5e8f7 100%);background-attachment:fixed}
+  .wrap{max-width:640px;margin:0 auto;padding:12px 12px 40px}
+  a{color:var(--blue)}
+  /* cabeçalho como o do Matrix */
+  .topo{background:var(--navy);color:#fff;border-radius:22px;padding:18px 18px 16px;margin:0 0 12px;position:relative;overflow:hidden}
+  .topo:after{content:"";position:absolute;right:-70px;bottom:-110px;width:240px;height:240px;border:1px solid #ffffff12;border-radius:50%}
+  .topo .linha{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .topo .sobre{font-size:13px;color:#c9d6f7;margin:0 0 4px;font-weight:500}
+  .topo .titulo{font-size:22px;line-height:1.2;font-weight:600;letter-spacing:-.02em;margin:0}
+  .topo img{width:96px;height:auto;flex:none;margin-top:2px}
+  .selo{display:inline-flex;gap:6px;align-items:center;margin:14px 0 0;font-size:12.5px;color:#d6e2ff;background:#ffffff14;border:1px solid #ffffff26;border-radius:999px;padding:4px 10px}
+  .card{background:var(--card);border-radius:20px;padding:20px 18px;margin:0 0 12px;border:1px solid #ffffffb0;box-shadow:0 1px 2px #081b500d}
+  .card p{margin:0 0 12px}.card p:last-child{margin-bottom:0}
+  .eyebrow{font-size:12.5px;font-weight:600;color:var(--cn);margin:0 0 6px;letter-spacing:.01em}
+  h1{font-size:25px;line-height:1.22;margin:0 0 12px;letter-spacing:-.02em;font-weight:600}
+  .abertura{margin:0 0 4px}
+  .mudou{font-size:14.5px;color:var(--muted);margin:10px 0 0}
+  h2{font-size:20px;line-height:1.3;margin:0 0 10px;letter-spacing:-.01em;font-weight:600}
+  h3{font-size:17px;line-height:1.3;margin:0 0 8px;font-weight:600}
+  .nota{font-size:13.5px;color:var(--muted)}
+  .btn{display:block;text-align:center;background:var(--blue);color:#fff;text-decoration:none;font-weight:600;font-size:16.5px;padding:14px 18px;border-radius:999px;margin:14px 0 0}
+  .btn.sec{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+  .link{color:var(--blue);font-weight:600}
+  /* cartão do curso, no formato da simulação do Sisu do Matrix (1ª opção em verde, medidor e situação) */
+  .curso{background:#eaf6ee;border-color:#cde7d6}
+  .curso .opcao{font-size:12.5px;font-weight:700;color:#1f6b3a;text-transform:uppercase;letter-spacing:.05em;margin:0 0 2px}
+  .curso .curso-nome{font-size:23px;line-height:1.2;font-weight:600;text-transform:uppercase;letter-spacing:-.01em;margin:0 0 4px;overflow-wrap:anywhere}
+  .curso .curso-ies{font-size:13.5px;color:var(--muted);margin:0 0 14px;padding:0 0 14px;border-bottom:1px solid #cfe3d6}
+  .alvo{--s:#8a5a00;background:#fff3dd;border-radius:18px;padding:14px 14px 12px;display:flex;gap:12px;align-items:center;margin:0 0 12px}
+  .curso.ok .alvo{--s:#1f7a2e;background:#fff}
+  .alvo-g{width:112px;flex:none;text-align:center}
+  .alvo-g svg{display:block;width:100%;height:auto}
+  .alvo-g .trilha{fill:none;stroke:#e9ecf2;stroke-width:12;stroke-linecap:round}
+  .alvo-g .valor{fill:none;stroke:var(--s);stroke-width:12;stroke-linecap:round}
+  .alvo-g text{font:700 30px Inter,system-ui,sans-serif;fill:var(--ink);letter-spacing:-1px}
+  .alvo-g span{display:block;font-size:12.5px;color:var(--muted);line-height:1.3;margin-top:2px}
+  .alvo-t{flex:1;min-width:0}
+  .st{display:inline-block;background:#fff;color:var(--s);font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 11px;margin:0 0 6px}
+  .curso.ok .st{background:#e3f5e7}
+  .curso .alvo-h{font-size:20px;line-height:1.25;font-weight:700;color:var(--s);margin:0 0 4px;letter-spacing:-.01em}
+  .curso .alvo-d{font-size:14px;line-height:1.45;margin:0}
+  .curso .aviso{margin:0}
+  .marca{display:block;width:92px;height:auto;margin:12px 0 0 auto;opacity:.85}
+  @media (min-width:520px){.alvo{padding:18px 20px;gap:20px}.alvo-g{width:136px}.curso .curso-nome{font-size:26px}.curso .alvo-h{font-size:23px}.curso .alvo-d{font-size:15px}}
+  .aviso{background:var(--warm-t);border:1px solid var(--warm-l);color:var(--warm);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.55}
+  .warm{background:var(--warm-t);border-color:var(--warm-l)}.warm .eyebrow{color:var(--warm)}
+  /* pontos fáceis */
+  .qchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 14px;padding:0;list-style:none}
+  .qchips li{background:var(--err-t);color:var(--err);font-weight:700;font-variant-numeric:tabular-nums;border-radius:10px;padding:5px 10px;font-size:15px}
+  .qs{list-style:none;margin:0 0 12px;padding:0}
+  .q{border-top:1px solid var(--line);padding:14px 0 12px;display:grid;grid-template-columns:44px 1fr;gap:10px}
+  .q:first-child{border-top:0;padding-top:4px}
+  .qn{width:40px;height:40px;border-radius:50%;background:#f3f6fb;display:grid;place-items:center;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+  .q b{display:block;font-size:15.5px;line-height:1.35}
+  .q small{display:block;color:var(--muted);font-size:13px;margin:2px 0 6px}
+  .q p{font-size:14.5px;margin:0 0 6px;line-height:1.5}
+  .l{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:13px;font-weight:700;vertical-align:middle}
+  .l.err{background:var(--err);color:#fff}.l.ok{border:2px solid var(--ok);color:var(--ok)}
+  .coelho{background:#f6f8fc;border-radius:10px;padding:8px 10px}
+  a.qn{color:var(--ink);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+  .verq{display:inline-block;color:var(--blue);font-size:14px;font-weight:600;margin:4px 0 0}
+  .tag{display:inline-block;background:var(--blue-soft);color:var(--blue);font-size:12.5px;font-weight:600;border-radius:8px;padding:3px 8px;margin:2px 0 0;text-decoration:none}
+  /* modelos que caíram */
+  .prova{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .prova .eyebrow{color:#9fb6ff}.prova .nota{color:#c3d0f0}
+  .mods{list-style:none;margin:8px 0 12px;padding:0}
+  .mods li{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:12px 0;border-top:1px solid #ffffff1f}
+  .mods li:first-child{border-top:0}
+  .mods .qn{background:#ffffff14;color:#fff}
+  .mods b{display:block;font-size:15.5px;line-height:1.35}
+  .mods .pct{font-size:13px;color:#c3d0f0;margin:2px 0 4px}
+  .mods .pct strong{color:#fff;font-size:15px}
+  .mods p{font-size:14px;color:#dbe4fb;margin:0 0 6px}
+  .mods a{color:#9fb6ff;font-size:13.5px;font-weight:600}
+  .res{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:2px 9px;margin:0 0 4px}
+  .res.ok{background:#d8f5df;color:#14532d}.res.err{background:#ffe0e0;color:#7f1d1d}
+  .resumo{background:#ffffff12;border-radius:14px;padding:12px 14px;font-size:15px}
+  .mgrupo{border-top:1px solid #ffffff1f;padding-top:12px;margin-top:4px}
+  .mgrupo summary{cursor:pointer;font-weight:600;list-style:none}
+  .mgrupo summary::-webkit-details-marker{display:none}
+  /* plano por área */
+  .area{border:1px solid var(--line);border-radius:18px;padding:16px 14px;margin:12px 0 0}
+  .area.prio{border:2px solid var(--a)}
+  .area-top{display:flex;gap:14px;align-items:center;margin:0 0 10px}
+  .gauge{width:112px;flex:none}
+  .gauge svg{display:block;width:100%;height:auto}
+  .gauge .trilha{fill:none;stroke:#eef1f5;stroke-width:12;stroke-linecap:round}
+  .gauge .valor{fill:none;stroke:var(--a);stroke-width:12;stroke-linecap:round}
+  .gauge text{font:700 23px Inter,system-ui,sans-serif;fill:var(--ink);letter-spacing:-.5px}
+  .pill{display:inline-block;background:var(--t);color:var(--a);font-size:13px;font-weight:600;border-radius:999px;padding:3px 11px}
+  .acertos{font-size:13.5px;color:var(--muted);margin:6px 0 0}
+  .faz{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:4px 0 12px}
+  .faz li{background:var(--t);color:var(--a);font-size:13.5px;font-weight:600;border-radius:10px;padding:5px 10px}
+  .chapeu{font-size:14.5px;background:#f6f8fc;border-radius:12px;padding:10px 12px}
+  .LC{--a:var(--lc);--t:var(--lc-t)}.CH{--a:var(--ch);--t:var(--ch-t)}.CN{--a:var(--cn);--t:var(--cn-t)}.MT{--a:var(--mt);--t:var(--mt-t)}
+  details.area summary{list-style:none;cursor:pointer}
+  details.area summary::-webkit-details-marker{display:none}
+  details.area .area-top{margin:0}
+  details.area[open] .area-top{margin:0 0 10px}
+  .mini .gauge{width:84px}
+  .mini .titulo-faixa{font-size:14.5px;font-weight:600;margin:4px 0 0;line-height:1.35}
+  .ver{font-size:13px;color:var(--blue);font-weight:600;margin:4px 0 0}
+  .outras{margin:22px 0 0;font-size:16px}
+  /* barras: só F, G e H (nota parcial) */
+  .bar{margin:12px 0}
+  .bar .top{display:flex;justify-content:space-between;font-size:15px;margin-bottom:4px}
+  .bar .num{font-variant-numeric:tabular-nums;font-weight:600}
+  .track{background:#eef1f5;border-radius:6px;height:10px;overflow:hidden}
+  .fill{height:100%;background:var(--a);border-radius:6px}
+  .bar.bloq .top{color:var(--muted)}
+  .bar.bloq .track{background:repeating-linear-gradient(-45deg,#eef1f5,#eef1f5 6px,#e2e6ee 6px,#e2e6ee 12px)}
+  .oferta{border:2px solid var(--blue)}.oferta .eyebrow{color:var(--blue)}
+  footer{font-size:12.5px;color:var(--muted);margin:22px 4px 0;line-height:1.5}
+  footer img{width:110px;opacity:.75;display:block;margin:0 0 10px}
+  @media (min-width:640px){.wrap{padding-top:24px}h1{font-size:30px}.topo{padding:22px 24px}.card{padding:24px}.topo img{width:120px}}
+</style></head><body>
+<main class="wrap">
+
+  <header class="topo">
+    <div class="linha">
+      <div>
+        <p class="sobre">Gabarito Enem 2026 · Diagnóstico</p>
+        <p class="titulo">{{topo_titulo}}</p>
+      </div>
+      <img src="{{logo_topo}}" alt="MaTRIx by Chapéu do Mago">
+    </div>
+    <span class="selo"><svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Recalculado com o gabarito oficial do Inep</span>
+  </header>
+
+  <!-- ABERTURA -->
+  <section class="card">
+    <h1>{{hero.titulo}}</h1>
+    <p class="abertura">{{hero.texto}}</p>
+    {{#hero.cta}}<a class="btn" href="{{url}}">{{texto}}</a>{{/hero.cta}}
+    {{#hero.cta_nota}}<p class="nota" style="margin:10px 0 0">{{hero.cta_nota}}</p>{{/hero.cta_nota}}
+  </section>
+
+  <!-- CURSO: média x 10% mais bem colocados -->
+  {{#curso}}
+  <section class="card curso{{#ok}} ok{{/ok}}">
+    <p class="opcao">{{opcao}}</p>
+    <h2 class="curso-nome">{{nome}}</h2>
+    <p class="curso-ies">{{ies_linha}}</p>
+    <div class="alvo">
+      <div class="alvo-g">
+        <svg viewBox="0 0 124 72" role="img" aria-label="Sua média estimada: {{media}}"><path class="trilha" d="M12 64 A50 50 0 0 1 112 64"/><path class="valor" d="M12 64 A50 50 0 0 1 112 64" stroke-dasharray="{{media_arco}} 158"/><text x="62" y="64" text-anchor="middle">{{media}}</text></svg>
+        <span>sua média estimada</span>
+      </div>
+      <div class="alvo-t">
+        <span class="st">{{status}}</span>
+        <p class="alvo-h">{{distancia}}</p>
+        <p class="alvo-d">{{ref_texto}} · <strong>{{ref_nota}}</strong></p>
+      </div>
+    </div>
+    <p class="aviso">{{aviso}}</p>
+    <img class="marca" src="{{logo_marca}}" alt="MaTRIx by Chapéu do Mago">
+  </section>
+  {{/curso}}
+
+  <!-- ALERTA: o que a conta ainda não considera -->
+  {{#alerta}}
+  <section class="card warm">
+    <p class="eyebrow">{{eyebrow}}</p>
+    <h2>{{titulo}}</h2>
+    <p>{{texto}}</p>
+  </section>
+  {{/alerta}}
+
+  <!-- PONTOS FÁCEIS -->
+  {{#faceis}}
+  <section class="card">
+    <p class="eyebrow">Os pontos fáceis de recuperar</p>
+    <h2>{{titulo}}</h2>
+    <p>No seu caderno {{caderno}}:</p>
+    <ul class="qchips">{{#chips}}<li>{{.}}</li>{{/chips}}</ul>
+    <ul class="qs">
+      {{#questoes}}
+      <li class="q"><a class="qn" href="{{url}}">{{num}}</a><div>
+        <b>{{titulo}}</b><small>{{pct}}% dos alunos acertaram</small>
+        <p>{{#branco}}Você deixou em branco.{{/branco}}{{^branco}}Você marcou <span class="l err">{{marcada}}</span>.{{/branco}} A resposta é <span class="l ok">{{correta}}</span>.</p>
+        {{#engana}}<p>Por que a {{marcada}} engana: {{engana}}</p>{{/engana}}
+        {{#coelho}}<p class="coelho"><strong>Tirando o coelho do chapéu:</strong> {{coelho}}</p>{{/coelho}}
+        {{#modelo}}<a class="tag" href="{{modelo_url}}">{{modelo}}</a>{{/modelo}}
+        <a class="verq" href="{{url}}">Ver a questão e a resolução no Matrix</a>
+      </div></li>
+      {{/questoes}}
+    </ul>
+    <p>{{rodape}}</p>
+  </section>
+  {{/faceis}}
+
+  <!-- MODELOS: antes da prova, a gente mostrou -->
+  {{#modelos}}
+  <section class="card prova">
+    <p class="eyebrow">Antes da prova, a gente mostrou. E caiu.</p>
+    <h2>{{titulo}}</h2>
+    {{#nota}}<p class="nota">{{nota}}</p>{{/nota}}
+    {{#grupos}}{{#rotulo}}<details class="mgrupo"{{#aberto}} open{{/aberto}}><summary>{{rotulo}}</summary>{{/rotulo}}<ol class="mods">{{#itens}}
+      <li><span class="qn">{{num}}</span><div><b>{{titulo}}</b><div class="pct"><strong>{{pct}}%</strong> dos alunos acertaram</div><p><strong>{{fonte}}</strong> {{texto}}</p>{{#aula_url}}<a href="{{aula_url}}">Ver o trecho da aula</a>{{/aula_url}}{{#ambos}} · {{/ambos}}{{#questao_url}}<a href="{{questao_url}}">Ver a questão no Matrix</a>{{/questao_url}}</div></li>{{/itens}}</ol>{{#rotulo}}</details>{{/rotulo}}{{/grupos}}
+    {{#resumo}}<p class="resumo">{{resumo}}</p>{{/resumo}}
+  </section>
+  {{/modelos}}
+
+  <!-- O SEU PLANO -->
+  {{#plano}}
+  <section class="card">
+    <p class="eyebrow">O seu plano</p>
+    <h2>{{titulo}}</h2>
+    <p class="nota">{{nota}}</p>
+    {{#prio}}
+    <div class="area prio {{codigo}}"><div class="area-top"><div class="gauge"><svg viewBox="0 0 124 72" role="img" aria-label="Nota estimada em {{nome}}: {{nota}}"><path class="trilha" d="M12 64 A50 50 0 0 1 112 64"/><path class="valor" d="M12 64 A50 50 0 0 1 112 64" stroke-dasharray="{{arco}} 158"/><text x="62" y="62" text-anchor="middle">{{nota}}</text></svg></div><div><span class="pill">{{nome}}</span><p class="acertos">{{acertos}} de 45 acertos</p></div></div><h3>{{titulo}}</h3><p>{{texto}}</p><p class="nota" style="margin:0">O que estudar primeiro</p><ul class="faz">{{#itens}}<li>{{.}}</li>{{/itens}}</ul><p class="chapeu"><strong>Como a gente trabalha isso:</strong> {{como}}</p></div>
+    {{/prio}}
+    <p class="nota" style="margin-top:10px">O plano é seu, mesmo que você nunca faça curso com a gente.</p>
+    {{#tem_outras}}<h3 class="outras">As outras áreas</h3>{{/tem_outras}}
+    {{#outras}}
+    <details class="area mini {{codigo}}"><summary><div class="area-top"><div class="gauge"><svg viewBox="0 0 124 72" role="img" aria-label="Nota estimada em {{nome}}: {{nota}}"><path class="trilha" d="M12 64 A50 50 0 0 1 112 64"/><path class="valor" d="M12 64 A50 50 0 0 1 112 64" stroke-dasharray="{{arco}} 158"/><text x="62" y="62" text-anchor="middle">{{nota}}</text></svg></div><div><span class="pill">{{nome}}</span><p class="acertos">{{acertos}} de 45 acertos</p><p class="titulo-faixa">{{titulo}}</p><p class="ver">Ver o que fazer</p></div></div></summary><p>{{texto}}</p><ul class="faz">{{#itens}}<li>{{.}}</li>{{/itens}}</ul><p class="chapeu"><strong>Como a gente trabalha isso:</strong> {{como}}</p></details>
+    {{/outras}}
+  </section>
+  {{/plano}}
+
+  <!-- NOTA PARCIAL (só um dia / gabarito incompleto) -->
+  {{#parcial}}
+  <section class="card">
+    <h2>A sua nota até agora</h2>
+    {{#barras}}
+    <div class="bar {{codigo}}{{#bloq}} bloq{{/bloq}}">
+      <div class="top"><span>{{nome}}</span><span class="num">{{valor}}</span></div>
+      <div class="track"><div class="fill" style="width:{{largura}}%"></div></div>
+    </div>
+    {{/barras}}
+  </section>
+  {{/parcial}}
+
+  <!-- CARDS DE OFERTA: seguro, 2ª fase, proposta, indicação (cada um só aparece se tiver título) -->
+  {{#cards}}
+  <section class="card{{#oferta}} oferta{{/oferta}}">
+    <p class="eyebrow">{{eyebrow}}</p>
+    <h2>{{titulo}}</h2>
+    {{#texto1}}<p>{{texto1}}</p>{{/texto1}}
+    {{#texto2}}<p>{{texto2}}</p>{{/texto2}}
+    {{#nota}}<p class="nota">{{nota}}</p>{{/nota}}
+    {{#cta}}<a class="btn" href="{{url}}">{{texto}}</a>{{/cta}}
+    {{#cta2}}<a class="btn sec" href="{{url}}">{{texto}}</a>{{/cta2}}
+    {{#link}}<p class="nota" style="margin-top:10px"><a class="link" href="{{url}}">{{texto}}</a></p>{{/link}}
+    {{#nota_final}}<p class="nota" style="margin-top:10px">{{nota_final}}</p>{{/nota_final}}
+  </section>
+  {{/cards}}
+
+  <footer>
+    <img src="{{logo_marca}}" alt="MaTRIx by Chapéu do Mago">
+    {{rodape}}
+  </footer>
+</main>
+</body></html>

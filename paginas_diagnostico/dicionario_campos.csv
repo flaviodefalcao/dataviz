@@ -1,0 +1,53 @@
+﻿campo;bloco;o que faz;exemplo
+aluno_id;Identificação;Nome do arquivo gerado (aluno_id.html). Único por linha.;exemplo_01_A
+grupo;Identificação;Grupo do aluno (A, A_topo, A0, B, C, D, E, F, G, H, M_aluno, M_gratis...). Só rótulo/filtro: não liga nem desliga blocos. Pode ser usado como {grupo} em qualquer célula (ex.: utm_content={grupo}).;A0
+nome;Identificação;Primeiro nome. Use {nome} em qualquer texto.;Ana
+rotulo_previa;Identificação;Faixa de título no _previa.html. Não aparece na página do aluno.;A · 20 a 60 pontos
+titulo_pagina;Identificação;<title> da página (aba do navegador).;Seu diagnóstico · Enem 2026
+topo_titulo;Topo;Título do cabeçalho azul.;{nome}, o seu resultado, questão por questão
+hero_titulo;Abertura;H1 da página.;{nome}, seus 24 pontos começam em Natureza
+hero_texto;Abertura;Parágrafo de abertura.;
+hero_cta_texto / hero_cta_url;Abertura;Botão da abertura. Aparece se hero_cta_texto estiver preenchido.;Lançar o dia 2
+hero_cta_nota;Abertura;Nota pequena abaixo do botão. Opcional.;Leva uns 3 minutos...
+curso_nome;Curso;LIGA o card do curso. Vazio = sem card.;Medicina
+curso_ok;Curso;"sim = card verde (empatado / entre os 10%); não = laranja (na disputa).";não
+curso_opcao;Curso;Rótulo acima do curso.;1ª opção
+curso_ies_linha;Curso;Linha da instituição.;UFMG · comparação com os alunos do Matrix
+curso_media;Curso;"Média estimada (número). O medidor é calculado a partir dela; aceita decimal (752,4).";752
+curso_status;Curso;Selo de situação.;Na disputa
+curso_distancia;Curso;Frase grande ao lado do medidor.;Faltam 24 pontos
+curso_ref_texto / curso_ref_nota;Curso;Referência e nota de referência (em negrito).;Nota dos 10% mais bem colocados / 777
+curso_aviso;Curso;Caixa de aviso do card.;
+alerta_eyebrow / alerta_titulo / alerta_texto;Alerta;Card bege 'o que a conta ainda não considera'. LIGA com alerta_titulo.;A redação
+faceis_titulo;Pontos fáceis;LIGA o bloco.;Você errou 3 das 15 questões de Natureza que mais alunos acertaram
+faceis_caderno;Pontos fáceis;Cor do caderno.;Amarelo
+faceis_chips;Pontos fáceis;Opcional. Vazio = números das questões em ordem crescente. Para forçar, separe por | .;91 | 103 | 125
+faceis_rodape;Pontos fáceis;Parágrafo final do bloco.;
+facilN_num;Questão fácil N;Número no caderno do aluno. Questão só aparece se preenchido. N = 1, 2, 3... (pode criar facil6_, facil7_... à vontade).;125
+facilN_url;Questão fácil N;Link da questão no Matrix (numeração canônica).;https://matrix.../questao-129?...
+facilN_titulo;Questão fácil N;Assunto da questão.;
+facilN_pct;Questão fácil N;% de acerto (só o número).;84
+facilN_marcada;Questão fácil N;Letra marcada. Vazio = 'Você deixou em branco.';E
+facilN_correta;Questão fácil N;Gabarito.;B
+facilN_engana;Questão fácil N;Opcional. Texto após 'Por que a X engana:' (só aparece se houver marcada).;
+facilN_coelho;Questão fácil N;Opcional. Texto após 'Tirando o coelho do chapéu:'.;
+facilN_modelo / facilN_modelo_url;Questão fácil N;Opcional. Etiqueta azul de questão modelo + link.;Questão modelo · ...
+modelos_titulo;Modelos que caíram;LIGA o bloco.;Você errou 3 das 5 questões de Natureza...
+modelos_nota;Modelos que caíram;Opcional. Nota abaixo do título.;
+modelos_resumo;Modelos que caíram;Opcional. Caixa de fechamento.;
+modeloN_grupo;Modelo N;Opcional. Se preenchido, modelos consecutivos com o mesmo texto viram uma sanfona com esse título (a 1ª abre). Vazio = lista simples.;Natureza: 14% a 36% de acerto
+modeloN_num / modeloN_titulo / modeloN_pct;Modelo N;Número no caderno, assunto, % de acerto. Modelo só aparece com num.;118 / Tubo em U... / 14
+modeloN_fonte / modeloN_texto;Modelo N;Fonte em negrito + texto.;Antes da prova, Prof. Ricci, 14/11:
+modeloN_aula_url / modeloN_questao_url;Modelo N;Links 'Ver o trecho da aula' e 'Ver a questão no Matrix' (cada um opcional).;
+plano_titulo / plano_nota;Plano;Título e nota do plano.;Por onde começar: Natureza
+areaN_codigo;Área N;"LC, CH, CN ou MT. area1 = prioritária (card aberto); area2-4 = 'outras áreas'. O plano aparece se area1_codigo estiver preenchido.";CN
+areaN_nota / areaN_acertos;Área N;Nota estimada (medidor) e acertos de 45.;724 / 33
+areaN_titulo / areaN_texto;Área N;Título da faixa e orientação.;
+areaN_itens;Área N;Lista 'o que estudar', separada por | (quantos itens quiser).;Item 1 | Item 2 | Item 3
+areaN_como;Área N;Texto após 'Como a gente trabalha isso:'.;
+parcial_LC / _CH / _CN / _MT;Nota parcial;"Barras de nota parcial (F, G, H). Número = barra preenchida; texto (ex.: 'falta lançar', 'incompleta') = barra bloqueada. Vazio = área não aparece. Bloco aparece se qualquer uma estiver preenchida.";549
+seguro_*;Card Seguro Aprovação;Card de oferta. LIGA com seguro_titulo. Campos: eyebrow, titulo, texto1, texto2, nota, cta_texto, cta_url, cta2_texto, cta2_url (botão branco), link_texto, link_url (link em nota), nota_final. Todos opcionais exceto titulo.;
+fase2_*;Card 2ª fase;Mesmos campos do seguro_*. LIGA com fase2_titulo.;
+proposta_*;Card proposta;Mesmos campos. LIGA com proposta_titulo.;
+indicacao_*;Card indicação;Mesmos campos, mas card simples (sem borda azul). LIGA com indicacao_titulo.;
+rodape_texto;Rodapé;Texto legal do rodapé.;
