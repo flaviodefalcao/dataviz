@@ -1,3 +1,5 @@
+> **Para gerar o site, veja [COMO_GERAR.md](COMO_GERAR.md).** Um comando: `python3 gerar_site.py base_alunos.csv`.
+
 # Páginas de diagnóstico parametrizadas
 
 ```

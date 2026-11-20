@@ -45,6 +45,9 @@ def ler_csv(caminho):
             for l in csv.DictReader(texto.splitlines(), delimiter=sep)]
 
 
+CANONICA = "Azul"  # o número canônico (link do Matrix) é o número no caderno Azul
+
+
 class Refs:
     def __init__(self, pasta=DADOS):
         p = Path(pasta)
@@ -58,6 +61,7 @@ class Refs:
         self.plano = defaultdict(list)
         for r in ler_csv(p / "textos_plano.csv"):
             self.plano[r["area"]].append(r)
+        self.numeracao = _NumeracaoComAzul(self.numeracao)
         self.cursos = {r["curso_id"]: r for r in ler_csv(p / "ref_cursos.csv")}
         self.areas = {r["area"]: r for r in ler_csv(p / "ref_areas.csv")}
         self.grupos = {r["grupo"]: r for r in ler_csv(p / "grupos.csv")}
@@ -65,6 +69,14 @@ class Refs:
         for r in ler_csv(p / "copy.csv"):
             self.copy[r["camada"]][r["campo"]] = r["texto"]
         self.colunas = [c for c in (p / "colunas.txt").read_text(encoding="utf-8").split("\n") if c]
+
+
+class _NumeracaoComAzul(dict):
+    """No caderno Azul o número é o próprio número canônico, então não precisa estar na tabela."""
+    def get(self, chave, padrao=None):
+        if chave in self:
+            return self[chave]
+        return str(chave[1]) if chave[0] == CANONICA else padrao
 
 
 # ------------------------------------------------------------------ utilidades
