@@ -204,10 +204,19 @@ def sentimento(fg: dict | None, deriv: dict | None, glob: dict | None,
                   f"há 30 dias {fg['valor_30d_atras']} (leitura contrária)", pts)
     if deriv:
         f = deriv["funding_atual"] * 100
-        pts = -20 if f > 0.05 else -10 if f > 0.02 else 25 if f < -0.02 else 15 if f < 0 else 0
-        pilar.add(f"Funding dos perpétuos {f:+.4f}% a cada 8h (média 7d {deriv['funding_media_7d']*100:+.4f}%)"
+        # |funding| < 0,005% por 8h é ruído: neutro
+        pts = -20 if f > 0.05 else -10 if f > 0.02 else 25 if f < -0.02 else 15 if f < -0.005 else 0
+        if deriv.get("funding_media_7d") is not None:
+            ref = f"média 7d {deriv['funding_media_7d']*100:+.4f}%"
+        else:
+            ref = f"média do mercado {deriv['funding_media_mercado']*100:+.4f}%, via {deriv['fonte']}"
+        pilar.add(f"Funding dos perpétuos {f:+.4f}% a cada 8h ({ref})"
                   + (": comprados alavancados pagando caro" if f > 0.02 else
-                     ": vendidos pagando, combustível para short squeeze" if f < 0 else ""), pts)
+                     ": vendidos pagando, combustível para short squeeze" if f < -0.005 else
+                   ": neutro" if abs(f) <= 0.005 else ""), pts)
+        if deriv.get("oi_var_7d") is None and deriv.get("oi_usd"):
+            pilar.add(f"Open interest total dos perpétuos de BTC: US$ {deriv['oi_usd']/1e9:.1f} bi "
+                      "(sem histórico nesta fonte)", 0)
         if deriv.get("oi_var_7d") is not None:
             oi = deriv["oi_var_7d"] * 100
             preco = _pct(btc_diario["close"].iloc[-1], btc_diario["close"].iloc[-8])

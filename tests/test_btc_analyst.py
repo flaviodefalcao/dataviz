@@ -94,3 +94,12 @@ def test_saidas(resultado):
     pagina = relatorio.pagina(resultado)
     assert pagina.startswith("<!doctype html>") and "lightweight-charts@4.2.0" in pagina
     assert '"planos"' in relatorio.para_json(resultado)
+
+
+def test_sentimento_com_derivativos_do_coingecko():
+    d = app._simular("1d", 300, 3)
+    deriv = {"fonte": "CoinGecko", "funding_atual": -0.0003, "funding_media_mercado": -0.0001,
+             "funding_media_7d": None, "oi_usd": 3e10, "oi_var_7d": None, "ls_top": None, "ls_geral": None}
+    p = analise.sentimento(None, deriv, None, d)
+    textos = " ".join(t for t, _ in p.sinais)
+    assert "CoinGecko" in textos and p.score > 0

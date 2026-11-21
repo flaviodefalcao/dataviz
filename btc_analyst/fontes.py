@@ -84,7 +84,41 @@ def candles(intervalo: str, limite: int = 500, simbolo: str = "BTCUSDT") -> pd.D
 
 # ------------------------------------------------------------ derivativos
 def derivativos(simbolo: str = "BTCUSDT") -> dict:
-    """Funding, open interest e razão long/short dos futuros perpétuos da Binance."""
+    """Funding, open interest e razão long/short. Usa a Binance; se ela bloquear o acesso
+    (erro 451 fora do Brasil/EUA etc.), cai para o agregado de perpétuos do CoinGecko."""
+    try:
+        return _derivativos_binance(simbolo)
+    except Exception as erro_binance:  # noqa: BLE001
+        try:
+            return _derivativos_coingecko(simbolo)
+        except Exception as erro_cg:  # noqa: BLE001
+            raise RuntimeError(f"Binance: {erro_binance} | CoinGecko: {erro_cg}") from erro_cg
+
+
+def _derivativos_coingecko(simbolo: str) -> dict:
+    dados = _get("https://api.coingecko.com/api/v3/derivatives",
+                 {"include_tickers": "unexpired"}).json()
+    perps = [x for x in dados if x.get("index_id") == "BTC" and x.get("contract_type") == "perpetual"
+             and x.get("funding_rate") is not None and x.get("open_interest")]
+    if not perps:
+        raise RuntimeError("sem perpétuos de BTC no CoinGecko")
+    binance = next((x for x in perps if x["market"].startswith("Binance") and x["symbol"] == simbolo), None)
+    oi_total = sum(float(x["open_interest"]) for x in perps)
+    # CoinGecko informa o funding em % por 8h; aqui tudo é fração (0,0001 = 0,01%)
+    media = sum(float(x["funding_rate"]) * float(x["open_interest"]) for x in perps) / oi_total / 100
+    return {
+        "fonte": "CoinGecko",
+        "funding_atual": float(binance["funding_rate"]) / 100 if binance else media,
+        "funding_media_mercado": media,
+        "funding_media_7d": None,
+        "oi_usd": oi_total,
+        "oi_var_7d": None,
+        "ls_top": None,
+        "ls_geral": None,
+    }
+
+
+def _derivativos_binance(simbolo: str) -> dict:
     base = "https://fapi.binance.com"
     premium = _get(f"{base}/fapi/v1/premiumIndex", {"symbol": simbolo}).json()
     historico = _get(f"{base}/fapi/v1/fundingRate", {"symbol": simbolo, "limit": 21}).json()
@@ -96,6 +130,7 @@ def derivativos(simbolo: str = "BTCUSDT") -> dict:
                     {"symbol": simbolo, "period": "4h", "limit": 1}).json()
     oi_valores = [float(x["sumOpenInterestValue"]) for x in oi]
     return {
+        "fonte": "Binance",
         "funding_atual": float(premium["lastFundingRate"]),
         "funding_media_7d": sum(float(x["fundingRate"]) for x in historico) / max(len(historico), 1),
         "oi_usd": oi_valores[-1] if oi_valores else None,
