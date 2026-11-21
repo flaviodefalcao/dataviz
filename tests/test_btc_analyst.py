@@ -103,3 +103,24 @@ def test_sentimento_com_derivativos_do_coingecko():
     p = analise.sentimento(None, deriv, None, d)
     textos = " ".join(t for t, _ in p.sinais)
     assert "CoinGecko" in textos and p.score > 0
+
+
+def test_recomendacao(resultado):
+    titulo, itens = relatorio.recomendacao(resultado)
+    assert titulo and isinstance(itens, list)
+    assert "O que fazer agora" in relatorio.pagina(resultado)
+
+
+def test_senha_da_vercel(monkeypatch):
+    import base64
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("vercel_index", "api/index.py")
+    index = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(index)
+    monkeypatch.setenv("RELATORIO_SENHA", "abc123")
+    cab = lambda u, s: "Basic " + base64.b64encode(f"{u}:{s}".encode()).decode()  # noqa: E731
+    assert index._senha_ok(cab("qualquer", "abc123"))
+    assert not index._senha_ok(cab("qualquer", "errada"))
+    assert not index._senha_ok(None)
+    monkeypatch.setenv("RELATORIO_SENHA", "")
+    assert not index._senha_ok(cab("x", ""))

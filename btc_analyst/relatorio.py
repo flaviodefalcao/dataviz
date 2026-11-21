@@ -20,6 +20,60 @@ def _sinal_entrada(p: Plano) -> str:
     return "máxima" if p.direcao == "long" else "mínima"
 
 
+# ------------------------------------------------------------ recomendação
+def recomendacao(r: dict) -> tuple[str, list[str]]:
+    """Resumo em linguagem direta do que fazer agora: (título, itens)."""
+    c = r["consolidado"]
+    validos = [p for p in r["planos"] if p.valido]
+    mercado = next((p for p in validos if p.tipo == "A mercado"), None)
+    limites = [p for p in validos if p.tipo != "A mercado"]
+    itens: list[str] = []
+
+    def desc(p: Plano) -> str:
+        return (f"stop {_n(p.stop)}, alvo 1 {_n(p.alvo1)} ({p.rr1:.1f}:1), alvo 2 {_n(p.alvo2)}, "
+                f"{p.quantidade:.5f} BTC (risco {_n(p.risco_usd, 2)} USDT)")
+
+    if c["direcao"] is None:
+        titulo = "Fique de fora: os sinais estão divididos"
+        itens.append("Nenhum lado tem vantagem clara. Os planos abaixo só valem se o preço chegar aos níveis.")
+    elif mercado:
+        lado = "Comprar" if mercado.direcao == "long" else "Vender"
+        titulo = f"{lado} agora a {_n(mercado.entrada)}"
+        itens.append(f"Entrada a mercado com {desc(mercado)}. Envie a entrada e o stop juntos (OCO).")
+    elif limites:
+        p = limites[0]
+        lado = "compra" if p.direcao == "long" else "venda"
+        titulo = f"Não entre agora: deixe ordem limite de {lado} em {_n(p.entrada)}"
+        itens.append(f"Ordem limite com {desc(p)}. Se não executar em 5 dias, cancele e rode a análise de novo.")
+        for extra in limites[1:]:
+            itens.append(f"Alternativa: ordem limite em {_n(extra.entrada)} ({extra.tipo.lower()}).")
+    else:
+        titulo = "Fique de fora: nenhum trade com 2:1 agora"
+        for p in r["planos"]:
+            if p.entrada_max_2r:
+                itens.append(f"Só ficaria 2:1 com entrada em {_n(p.entrada_max_2r)} e stop em {_n(p.stop)}.")
+
+    if any(p.direcao == "short" for p in validos):
+        itens.append("Venda exige conta de futuros ou margem. Se você só opera spot, a recomendação é aguardar.")
+
+    # Alertas de contexto contra a direção do trade
+    tec = next((p for p in r["pilares"] if p.nome == "Técnico" and p.disponivel), None)
+    sent = next((p for p in r["pilares"] if p.nome == "Sentimento e índices" and p.disponivel), None)
+    rsi = tec.dados.get("rsi_1d") if tec else None
+    fg = (sent.dados.get("fear_greed") or {}).get("valor") if sent else None
+    if c["direcao"] == "short" and ((rsi is not None and rsi < 25) or (fg is not None and fg <= 20)):
+        itens.append("Cuidado: mercado sobrevendido e em medo extremo. Repiques fortes são comuns; "
+                     "não venda depois de quedas grandes, espere o repique até a resistência.")
+    if c["direcao"] == "long" and ((rsi is not None and rsi > 75) or (fg is not None and fg >= 80)):
+        itens.append("Cuidado: mercado sobrecomprado e em euforia. Não compre depois de altas grandes, "
+                     "espere o recuo até o suporte.")
+    noticias = next((p for p in r["pilares"] if p.nome == "Notícias" and p.disponivel), None)
+    if noticias and noticias.dados.get("eventos"):
+        itens.append("Evento macro no radar (" + ", ".join(noticias.dados["eventos"])
+                     + "): o risco por trade já foi reduzido pela metade.")
+    return titulo, itens
+
+
 # ---------------------------------------------------------------- terminal
 def texto(r: dict) -> str:
     c, cfg = r["consolidado"], r["config"]
@@ -32,6 +86,8 @@ def texto(r: dict) -> str:
         linhas.append("  ** DADOS SIMULADOS (modo --demo): não use para operar **")
     linhas += [f"  VIÉS: {c['vies']}  (nota {c['nota']:+.0f} de -100 a +100; {c['confluencia']}; "
                f"{c['cobertura']})", ""]
+    titulo, itens = recomendacao(r)
+    linhas += [f"RECOMENDAÇÃO: {titulo}"] + [f"   > {i}" for i in itens] + [""]
     for p in r["pilares"]:
         if not p.disponivel:
             linhas.append(f"[{p.nome}]  indisponível: {p.erro}")
@@ -186,6 +242,8 @@ def pagina(r: dict) -> str:
     gestao = "".join(f"<li>{_esc(g.format(risco=cfg.risco_pct, rr=cfg.rr_min))}</li>" for g in GESTAO)
     demo = ('<div class="faixa-demo">Dados simulados (modo demo): não use para operar.</div>'
             if r.get("demo") else "")
+    rec_titulo, rec_lista = recomendacao(r)
+    rec_itens = "".join(f"<li>{_esc(i)}</li>" for i in rec_lista)
     tom_vies = "pos" if c["nota"] >= 15 else "neg" if c["nota"] <= -15 else "neutro"
 
     return f"""<!doctype html>
@@ -233,6 +291,10 @@ small, .mudo {{ color:var(--text-muted); }}
 .tile span {{ display:block; color:var(--text-secondary); font-size:13px; }}
 .tile strong {{ font-size:26px; font-variant-numeric:tabular-nums; }}
 .tile .pos {{ color:var(--alta); }} .tile .neg {{ color:var(--baixa); }}
+.recomendacao {{ border-left:4px solid var(--text-primary); }}
+.rec-titulo {{ font-size:19px; font-weight:700; margin:0 0 8px; }}
+.recomendacao ul {{ margin:0; padding-left:20px; color:var(--text-secondary); }}
+.recomendacao li {{ margin:4px 0; }}
 .pilar {{ display:grid; grid-template-columns:minmax(120px,190px) 1fr 44px; align-items:center; gap:12px; padding:6px 0; }}
 .pilar-nome {{ color:var(--text-secondary); font-size:14px; }}
 .pilar-valor {{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; }}
@@ -299,6 +361,12 @@ ol {{ padding-left:20px; margin:0; }} ol li {{ margin:4px 0; }}
     <div class="tile"><span>Viés</span><strong class="{tom_vies}">{_esc(c['vies'])}</strong></div>
     <div class="tile"><span>Nota consolidada</span><strong>{c['nota']:+.0f}</strong> <small>de −100 a +100</small></div>
     <div class="tile"><span>Confluência</span><strong>{_esc(c['confluencia'].split(' ')[0])}</strong> <small>pilares concordam</small></div>
+  </section>
+
+  <section class="cartao recomendacao">
+    <h2>O que fazer agora</h2>
+    <p class="rec-titulo">{_esc(rec_titulo)}</p>
+    <ul>{rec_itens}</ul>
   </section>
 
   <section class="cartao">

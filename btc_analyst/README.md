@@ -64,3 +64,15 @@ pip install pytest && python -m pytest tests
 ```
 
 > Análise automática e educativa, não é recomendação de investimento.
+
+## Site com senha na Vercel
+
+A pasta `api/` tem uma função da Vercel que gera o relatório a cada acesso (dados
+reaproveitados por 10 minutos) e pede senha.
+
+1. Em vercel.com, **Add New → Project** e importe este repositório.
+2. Em **Settings → Environment Variables**, crie `RELATORIO_SENHA` com a senha desejada.
+3. Faça o deploy. O navegador pede usuário e senha: o usuário pode ser qualquer um.
+
+O `vercel.json` roda a função em São Paulo (`gru1`), onde a Binance responde. Parâmetros
+opcionais: `?capital=5000&risco=1&rr=2`. Sem a variável `RELATORIO_SENHA`, o site não abre.
