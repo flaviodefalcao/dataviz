@@ -1,8 +1,12 @@
 package br.com.alertabt2;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -31,10 +35,36 @@ public final class TradeDeskActivity extends Activity {
         s.setAllowUniversalAccessFromFileURLs(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         s.setSupportZoom(false);
-        web.setWebViewClient(new WebViewClient()); // mantém navegação dentro do app
+        // Só a página local é carregada: qualquer outro link é bloqueado (protege a ponte JS).
+        web.setWebViewClient(new WebViewClient() {
+            @Override public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
+                return !r.getUrl().toString().startsWith("file:///android_asset/");
+            }
+        });
+        web.setWebChromeClient(new WebChromeClient()); // habilita alert()/confirm()
+        web.addJavascriptInterface(new Bridge(), "Android");
 
         if (state != null) web.restoreState(state);
         else web.loadUrl("file:///android_asset/index.html");
+    }
+
+    /** Exposto ao JS como window.Android. */
+    private final class Bridge {
+        @JavascriptInterface
+        public void share(final String fileName, final String text) {
+            runOnUiThread(new Runnable() {
+                @Override public void run() {
+                    Intent send = new Intent(Intent.ACTION_SEND)
+                            .setType("text/plain")
+                            .putExtra(Intent.EXTRA_SUBJECT, fileName)
+                            .putExtra(Intent.EXTRA_TEXT, text);
+                    try {
+                        startActivity(Intent.createChooser(send, "Exportar histórico"));
+                    } catch (RuntimeException ignored) {
+                    }
+                }
+            });
+        }
     }
 
     @Override

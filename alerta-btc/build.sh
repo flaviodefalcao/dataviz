@@ -6,8 +6,8 @@ cd "$(dirname "$0")"
 ANDROID_JAR=${ANDROID_JAR:?defina ANDROID_JAR}
 KEYSTORE=${KEYSTORE:?defina KEYSTORE}
 KS_PASS=${KS_PASS:?defina KS_PASS}
-VERSION_CODE=24
-VERSION_NAME=2.4
+VERSION_CODE=25
+VERSION_NAME=2.5
 OUT=build
 rm -rf $OUT && mkdir -p $OUT/gen $OUT/classes $OUT/dex
 
